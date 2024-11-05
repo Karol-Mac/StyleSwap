@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface StorageRepository extends JpaRepository<Storage, Long> {
 
-    Optional<Storage> findByUserId(long userId);
+    Optional<Storage> findByUserEmail(String email);
 }
