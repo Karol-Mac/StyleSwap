@@ -1,21 +1,21 @@
-use vinted;
+use styleswap;
 
 insert into roles (name) values ('ROLE_ADMIN');
 insert into roles (name) values ('ROLE_USER');
 
 -- creating users
-insert into vinted.users (email, name, password, username) values ('admin@email.com', 'admin',
+insert into users (email, name, password, username) values ('admin@email.com', 'admin',
                                                                    '$2a$10$Kcv0RMReIoG7unGNEdqbaO/oCvDkRHJ6.gjQ47bY6on98Ysvpy/7i', 'admin');
 
-insert into vinted.users (email, name, password, username) values ('user1@email.com', 'user1',
+insert into users (email, name, password, username) values ('user1@email.com', 'user1',
                                                                    '$2a$10$BO38kLt14mkRORfJOf0SRO4XOfsegJIJFLXze50hLqhrlbMXIeJem', 'user1');
 
-insert into vinted.users (email, name, password, username) values ('user2@email.com', 'user2',
+insert into users (email, name, password, username) values ('user2@email.com', 'user2',
                                                                    '$2a$10$47m4oq68rn2phtIzCSIaEuIEA1ONGWEzcR590cRi2lXwwCqmpO0tm', 'user2');
 -- give users specific roles
-insert into vinted.users_roles (user_id, role_id) values (1, 1);
-insert into vinted.users_roles (user_id,role_id) values (2, 2);
-insert into vinted.users_roles (user_id,role_id) values (3, 2);
+insert into users_roles (user_id, role_id) values (1, 1);
+insert into users_roles (user_id,role_id) values (2, 2);
+insert into users_roles (user_id,role_id) values (3, 2);
 
 INSERT INTO categories (name, description, created_at, updated_at)
 VALUES ('T-Shirts', 'Category for various T-Shirts', DATE(NOW()), DATE(NOW()));

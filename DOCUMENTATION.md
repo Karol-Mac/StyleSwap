@@ -11,7 +11,7 @@ Baza danych jest automatycznie inicjalizowana jako komponent Docker <br>
  i zapełniana przykładowymi danymi przy starcie aplikacji.
 
 #### Uruchomienie Serwera:
- - wywołać metodę main z klasy [VintedApplication](src/main/java/com/restapi/vinted/VintedApplication.java)
+ - wywołać metodę main z klasy [VintedApplication](src/main/java/com/restapi/styleswap/VintedApplication.java)
     - lub wpisać w terminalu `./mvnw spring-boot:run` w katalogu projektu
 
 ## Endpointy aplikacji:
@@ -52,8 +52,8 @@ Baza danych jest automatycznie inicjalizowana jako komponent Docker <br>
 
 ### Rejestracja i logowanie użytkownika
 Endpointy związane z rejestracją i logowaniem użytkownika są dostępne dla wszystkich użytkowników. <br>
-Dostępne są one w klasie [AuthController](src/main/java/com/restapi/vinted/controller/AuthController.java),
-który następnie przekazuje zapytanie do serwisu [AuthService](src/main/java/com/restapi/vinted/service/impl/AuthServiceImpl.java).
+Dostępne są one w klasie [AuthController](src/main/java/com/restapi/styleswap/controller/AuthController.java),
+który następnie przekazuje zapytanie do serwisu [AuthService](src/main/java/com/restapi/styleswap/service/impl/AuthServiceImpl.java).
 1. Rejestracja nowego użytkownika:
    ```
    curl --location 'http://localhost:8080/api/auth/register' \
@@ -75,7 +75,7 @@ który następnie przekazuje zapytanie do serwisu [AuthService](src/main/java/co
 | username | Musi zawierać od 3 do 20 znaków, nie może być puste                                                                 |
 | email    | Musi być w formacie poprawnego adresu email (musi zawierać '@'), nie może być puste                                 |
 | password | Musi zawierać co najmniej: 1 wielką literę, 1 małą literę, 1 cyfrę, 1 znak specjalny, minimalna długość to 8 znaków |
-w kodzie jest to klasa [RegisterDto](src/main/java/com/restapi/vinted/payload/RegisterDto.java)
+w kodzie jest to klasa [RegisterDto](src/main/java/com/restapi/styleswap/payload/RegisterDto.java)
 
 2. Logowanie użytkownika:
     ```
@@ -108,8 +108,8 @@ w kodzie jest to klasa [RegisterDto](src/main/java/com/restapi/vinted/payload/Re
 ### Ubrania
 Endpointy związane z przeglądaniem oferty sklepu są dostępne dla wszystkich użytkowników, <br>
     ale tutaj skupimy się na operacjach dla zalogowanych użytkowników (np. pisaniu wiadomości do włąścicieli i edycji ubrań). <br>
-Dostępne są one w klasie [ClotheController](src/main/java/com/restapi/vinted/controller/ClotheController.java),<br>
-który następnie przekazuje zapytanie do serwisu [ClothesService](src/main/java/com/restapi/vinted/service/impl/ClothesServiceImpl.java).<br>
+Dostępne są one w klasie [ClotheController](src/main/java/com/restapi/styleswap/controller/ClotheController.java),<br>
+który następnie przekazuje zapytanie do serwisu [ClothesService](src/main/java/com/restapi/styleswap/service/impl/ClothesServiceImpl.java).<br>
 
 1. Pobranie wszystkich ubrań z danej kategorii:<br>
     Akcja dostępna dla wszystkich użytkowników:
@@ -129,7 +129,7 @@ który następnie przekazuje zapytanie do serwisu [ClothesService](src/main/java
 2. Dodanie nowego ubrania:<br>
     Akcja dostępna _tylko_ dla zalogowanych użytkowników: <br>
     Dodawane jest na raz ubranie oraz jego zdjęcia (max 5). <br>
-    Reprezentacja dodawanego ubrania: [ClotheDto](src/main/java/com/restapi/vinted/payload/ClotheDto.java) <br>
+    Reprezentacja dodawanego ubrania: [ClotheDto](src/main/java/com/restapi/styleswap/payload/ClotheDto.java) <br>
     Zdjęcie jest zapisywane na serwerze w folderze [images](src/main/resources/static/images). <br>
     Podczas zapisywania do oryginalnej nazwy pliku dodawany jest UUID, aby uniknąć konfliktów. <br>
    (Żeby pobrać zdjęcie należy użyć endpointu /api/images/{imageName})<br>
@@ -208,8 +208,8 @@ który następnie przekazuje zapytanie do serwisu [ClothesService](src/main/java
 
 ### Konwersacje
 Operacje związanie z konwersacjami są dostępne tylko **dla zalogowanych** użytkowników, <br>
-    endpointy związane z konwersacjami są dostępne w klasie [MessagingController](src/main/java/com/restapi/vinted/controller/MessagingController.java),<br>
-    która przekazuje zapytanie do serwisu [MessagingService](src/main/java/com/restapi/vinted/service/impl/MessagingServiceImpl.java).<br>
+    endpointy związane z konwersacjami są dostępne w klasie [MessagingController](src/main/java/com/restapi/styleswap/controller/MessagingController.java),<br>
+    która przekazuje zapytanie do serwisu [MessagingService](src/main/java/com/restapi/styleswap/service/impl/MessagingServiceImpl.java).<br>
 
     Logika tworzenia i operowania na konwersacjach może być myląca, ponieważ zakłada ona,
     że kupujący (buyer) piszę do ubrania.
@@ -295,7 +295,7 @@ Operacje związanie z konwersacjami są dostępne tylko **dla zalogowanych** uż
     Location: `http://localhost:8080/api/conversations?conversationId=1`
 
 ## Testy
-Przykłądowe testy jednostkowe znajdują się w folderze testowym [test](src/test/java/com/restapi/vinted).<br>
+Przykłądowe testy jednostkowe znajdują się w folderze testowym [test](src/test/java/com/restapi/styleswap).<br>
 
 komenda do uruchomienia testów:
 `./mvnw test`
