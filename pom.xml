@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.rest-api</groupId>
-	<artifactId>vinted</artifactId>
+	<artifactId>StyleSwap</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>vinted</name>
 	<description>REST API for vinted-like application</description>
