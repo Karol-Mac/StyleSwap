@@ -2,6 +2,7 @@ package com.restapi.styleswap.service.impl;
 
 import com.restapi.styleswap.entity.Role;
 import com.restapi.styleswap.entity.User;
+import com.restapi.styleswap.exception.ApiException;
 import com.restapi.styleswap.payload.JwtAuthResponse;
 import com.restapi.styleswap.payload.LoginDto;
 import com.restapi.styleswap.payload.RegisterDto;
@@ -14,6 +15,7 @@ import com.restapi.styleswap.utils.UserUtils;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Account;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

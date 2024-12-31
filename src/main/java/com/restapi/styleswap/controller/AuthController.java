@@ -1,10 +1,10 @@
 package com.restapi.styleswap.controller;
 
+import com.restapi.styleswap.exception.ApiException;
 import com.restapi.styleswap.payload.JwtAuthResponse;
 import com.restapi.styleswap.payload.LoginDto;
 import com.restapi.styleswap.payload.RegisterDto;
 import com.restapi.styleswap.service.AuthService;
-import com.stripe.exception.StripeException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,17 +23,22 @@ public class AuthController {
     }
 
     @PostMapping(value = {"/login", "/signin"})
-    public ResponseEntity<JwtAuthResponse> login(@RequestBody @Valid LoginDto loginDto){
+    public ResponseEntity<JwtAuthResponse> login(
+            @RequestBody(required = false) @Valid LoginDto loginDto){
+
+        if(loginDto == null)
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Request body is missing");
 
         return ResponseEntity.ok(authService.login(loginDto));
     }
 
 
     @PostMapping(value = {"/register", "/signup"})
-    public ResponseEntity<String> register(@RequestBody @Valid RegisterDto registerDto) throws StripeException {
+    public ResponseEntity<String> register(
+                    @RequestBody(required = false) @Valid RegisterDto registerDto){
 
-        String phoneNumber = registerDto.getPhoneNumber().replaceAll("[^0-9]", "");
-        registerDto.setPhoneNumber(phoneNumber);
+        if(registerDto == null)
+                    throw new ApiException(HttpStatus.BAD_REQUEST, "Request body is missing");
 
         return new ResponseEntity<>(authService.register(registerDto), HttpStatus.CREATED);
     }
