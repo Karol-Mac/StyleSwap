@@ -31,18 +31,18 @@ public class StorageController {
         return null;
     }
 
-    @PostMapping("/buy")
-    public ResponseEntity<Void> buyAllCLothes(Principal principal) {
-
-        storageService.buyAllClothes(principal.getName());
-        return ResponseEntity.noContent().build();
-    }
-
-
     @DeleteMapping("/{clotheId}")
     public ResponseEntity<Void> removeClothe(@PathVariable int clotheId, Principal principal) {
 
         storageService.removeClothe(clotheId, principal.getName());
         return ResponseEntity.noContent().build();
     }
+
+    //TODO: zakomentowane, bo nie ma obsługi kupna kilku przedmiotó na raz (w stripe)
+//    @PostMapping("/buy")
+//    public ResponseEntity<Void> buyAllCLothes(Principal principal) {
+//
+//        storageService.buyAllClothes(principal.getName());
+//        return ResponseEntity.noContent().build();
+//    }
 }
