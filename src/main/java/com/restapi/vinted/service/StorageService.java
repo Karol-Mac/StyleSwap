@@ -11,5 +11,5 @@ public interface StorageService {
 
     void removeClothe(int clotheId, String name);
 
-    void buyAllClothes(String name);
+//    void buyAllClothes(String name);
 }

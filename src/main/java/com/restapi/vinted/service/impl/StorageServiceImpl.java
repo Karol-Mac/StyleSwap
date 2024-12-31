@@ -62,13 +62,13 @@ public class StorageServiceImpl implements StorageService {
         storageRepository.save(storage);
     }
 
-
-    @Override
-    public void buyAllClothes(String email) {
-        var storage = getStorageFromDB(email);
-
-        storage.getClothes().forEach(clothe -> orderService.createOrder(clothe.getId(), email));
-    }
+    //TODO: jak na razie nie mam obsługi kupna kilku rzeczy na raz
+//    @Override
+//    public void buyAllClothes(String email) {
+//        var storage = getStorageFromDB(email);
+//
+//        storage.getClothes().forEach(clothe -> orderService.createOrder(clothe.getId(), email));
+//    }
 
     // FIXME: this might ba a bug - change loadData.sql file - every user should has a storage
     private Storage getStorageFromDB(String email) {
