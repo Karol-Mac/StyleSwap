@@ -21,6 +21,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    private String stripeAccountId;
+
     @Column(nullable = false, unique = true)
     private String username;
 
