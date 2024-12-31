@@ -1,6 +1,5 @@
 package com.restapi.vinted.entity;
 
-import com.restapi.vinted.utils.PaymentMethod;
 import com.restapi.vinted.utils.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -26,7 +25,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private String transactionId;
+    private String paymentIntentId;
 
     @Column(nullable = false)
     private BigDecimal totalAmount;
@@ -50,7 +49,4 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
-
-    @Enumerated(EnumType.STRING)
-    private PaymentMethod paymentMethod;
 }
