@@ -11,6 +11,7 @@ import com.restapi.styleswap.repository.UserRepository;
 import com.restapi.styleswap.security.JwtTokenProvider;
 import com.restapi.styleswap.service.impl.AuthServiceImpl;
 import com.restapi.styleswap.utils.UserUtils;
+import com.stripe.exception.StripeException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -90,7 +91,7 @@ class AuthServiceImplTest {
     }
 
     @Test
-    void registerWithValidDataReturnsSuccessMessage() {
+    void registerWithValidDataReturnsSuccessMessage() throws StripeException {
         RegisterDto registerDto = new RegisterDto("user", "password", "email@example.com", "name");
         Role role = new Role(0L, "ROLE_USER");
         when(roleRepository.findByName("ROLE_USER")).thenReturn(Optional.of(role));

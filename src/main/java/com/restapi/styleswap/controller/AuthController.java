@@ -5,6 +5,7 @@ import com.restapi.styleswap.payload.JwtAuthResponse;
 import com.restapi.styleswap.payload.LoginDto;
 import com.restapi.styleswap.payload.RegisterDto;
 import com.restapi.styleswap.service.AuthService;
+import com.stripe.exception.StripeException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,8 +35,7 @@ public class AuthController {
 
 
     @PostMapping(value = {"/register", "/signup"})
-    public ResponseEntity<String> register(
-                    @RequestBody(required = false) @Valid RegisterDto registerDto){
+    public ResponseEntity<String> register(@RequestBody(required = false) @Valid RegisterDto registerDto) throws StripeException {
 
         if(registerDto == null)
                     throw new ApiException(HttpStatus.BAD_REQUEST, "Request body is missing");
