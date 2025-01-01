@@ -1,6 +1,8 @@
 package com.restapi.styleswap.service.impl;
 
+import com.restapi.styleswap.entity.Clothe;
 import com.restapi.styleswap.entity.Order;
+import com.restapi.styleswap.entity.User;
 import com.restapi.styleswap.exception.ApiException;
 import com.restapi.styleswap.repository.OrderRepository;
 import com.restapi.styleswap.service.OrderService;
@@ -9,6 +11,7 @@ import com.restapi.styleswap.utils.OrderStatus;
 import com.restapi.styleswap.utils.StripeManager;
 import com.restapi.styleswap.utils.UserUtils;
 import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -33,20 +36,11 @@ public class OrderServiceImpl implements OrderService {
 
         var clothe = clotheUtils.getClotheFromDB(clotheId);
         var buyer = userUtils.getUser(email);
-
-        var order =  Order.builder()
-                        .clothe(clothe)
-                        .buyer(buyer)
-                        .orderStatus(OrderStatus.PENDING)
-                        .seller(clothe.getUser())
-                        .totalAmount(clothe.getPrice())
-                        .build();
-
         var paymentIntent = StripeManager.createPaymentIntent(
-                                                order.getTotalAmount().longValue(),
-                                                buyer.getStripeAccountId());
-        order.setPaymentIntentId(paymentIntent.getId());
-        orderRepository.save(order);
+                clothe.getPrice().longValue(),
+                buyer.getStripeAccountId());
+
+        saveOrderEntity(clothe, buyer, paymentIntent);
 
         return paymentIntent.getClientSecret();
     }
@@ -62,6 +56,18 @@ public class OrderServiceImpl implements OrderService {
 //        order.setOrderStatus(OrderStatus.CANCELLED);
 //        orderRepository.save(order);
 //    }
+
+    private void saveOrderEntity(Clothe clothe, User buyer, PaymentIntent paymentIntent) {
+        var order =  Order.builder()
+                .clothe(clothe)
+                .buyer(buyer)
+                .orderStatus(OrderStatus.PENDING)
+                .seller(clothe.getUser())
+                .totalAmount(clothe.getPrice())
+                .paymentIntentId(paymentIntent.getId())
+                .build();
+        orderRepository.save(order);
+    }
 
     private static void checkIfOrderIsValid(String name, Order order) {
         if (!order.getBuyer().getEmail().equals(name))
