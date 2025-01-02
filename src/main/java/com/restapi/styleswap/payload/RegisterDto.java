@@ -10,12 +10,19 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterDto {  //TODO: add/change fields needed to  create strip account:
-                            //       firstName, lastName, phoneNumber
-                            // TODO: and add additional firlds to user entity
+public class RegisterDto {
     @NotEmpty
-    private String name;
-    @Size(min = 3, max = 20, message = "username need's to contain 3-20 characters")
+    private String firstName;
+
+    @NotEmpty
+    private String lastName;
+
+    @NotNull
+    @Pattern(regexp = "^[0-9]{3}[- ]?[0-9]{3}[- ]?[0-9]{3}",
+             message = "enter only phone number (without counytry code)")
+    private String phoneNumber;
+
+    @Size(min = 3, max = 50, message = "username need's to contain 3-50 characters")
     @NotNull
     private String username;
     @Email(message = "email has to contain '@'.")
