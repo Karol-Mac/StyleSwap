@@ -92,7 +92,7 @@ class AuthServiceImplTest {
 
     @Test
     void registerWithValidDataReturnsSuccessMessage() throws StripeException {
-        RegisterDto registerDto = new RegisterDto("user", "password", "email@example.com", "name");
+        RegisterDto registerDto = new RegisterDto("user","surname","123456789", "password", "email@example.com", "name");
         Role role = new Role(0L, "ROLE_USER");
         when(roleRepository.findByName("ROLE_USER")).thenReturn(Optional.of(role));
         when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
@@ -105,8 +105,8 @@ class AuthServiceImplTest {
 
     @Test
     void registerWithExistingUsernameOrEmailThrowsApiException() {
-        RegisterDto registerDto = new RegisterDto("user", "password", "email@example.com", "name");
-        doThrow(new ApiException(HttpStatus.BAD_REQUEST, "Username or Email already exists")).when(userUtils).validateUsernameAndEmail(registerDto);
+        RegisterDto registerDto = new RegisterDto("user","surname","123456789", "password", "email@example.com", "name");
+        doThrow(new ApiException(HttpStatus.BAD_REQUEST, "Username or Email already exists")).when(userUtils).checkIfUsernameOfEmailExist(registerDto);
 
         ApiException exception = assertThrows(ApiException.class, () -> authService.register(registerDto));
 

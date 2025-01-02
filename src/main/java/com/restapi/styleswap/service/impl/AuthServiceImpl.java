@@ -45,7 +45,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public JwtAuthResponse login(LoginDto loginDto){
+    public JwtAuthResponse login(LoginDto loginDto) {
         Authentication authentication = authenticateUser(loginDto);
         User user = userRepository.findByUsernameOrEmail(
                                         loginDto.getUsernameOrEmail(),
@@ -58,22 +58,23 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public String register(RegisterDto registerDto) throws StripeException {
 
-        userUtils.validateUsernameAndEmail(registerDto);
+        userUtils.checkIfUsernameOfEmailExist(registerDto);
         Role userRole = roleRepository.findByName("ROLE_USER").get();
 
-        Account stripeAccount = StripeManager.createStripeAccount(registerDto.getEmail());
-        String stripeRegisterLink = StripeManager.generateStripeRegisterLink(stripeAccount);
+        Account stripeAccount = StripeManager.createStripeAccount(registerDto);
+        createAndSaveUserEntity(registerDto, stripeAccount, userRole);
 
-        saveUserEntity(registerDto, stripeAccount, userRole);
-
-        return stripeRegisterLink;
+        return StripeManager.generateStripeRegisterLink(stripeAccount);
     }
 
-    private void saveUserEntity(RegisterDto registerDto, Account stripeAccount, Role userRole) {
+    private void createAndSaveUserEntity(RegisterDto registerDto, Account stripeAccount, Role userRole) {
+
         User user = User.builder()
                 .email(registerDto.getEmail())
                 .password(passwordEncoder.encode(registerDto.getPassword()))
-                .name(registerDto.getName())
+                .firstName(registerDto.getFirstName())
+                .lastName(registerDto.getLastName())
+                .phoneNumber(registerDto.getPhoneNumber())
                 .username(registerDto.getUsername())
                 .stripeAccountId(stripeAccount.getId())
                 .roles(Set.of(userRole))

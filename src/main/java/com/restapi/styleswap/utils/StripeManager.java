@@ -1,5 +1,6 @@
 package com.restapi.styleswap.utils;
 
+import com.restapi.styleswap.payload.RegisterDto;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Account;
 import com.stripe.model.AccountLink;
@@ -7,7 +8,6 @@ import com.stripe.model.PaymentIntent;
 import com.stripe.param.AccountCreateParams;
 import com.stripe.param.AccountLinkCreateParams;
 import com.stripe.param.PaymentIntentCreateParams;
-import com.stripe.param.common.EmptyParam;
 
 public class StripeManager {
 
@@ -41,33 +41,40 @@ public class StripeManager {
         return AccountLink.create(linkParams).getUrl();
     }
 
-    //TODO: make this method required registerDto/user parameter
-    //TODO: extract mthods from this piece of sh*t
-    public static Account createStripeAccount(String email) throws StripeException {
+    public static Account createStripeAccount(RegisterDto registerDto) throws StripeException {
+        AccountCreateParams.BusinessProfile profile = createBusinessProfile();
+        AccountCreateParams.Individual individual = createIndividual(registerDto);
+        AccountCreateParams accountParams = getAccountCreateParams(registerDto, individual, profile);
 
-        AccountCreateParams.BusinessProfile profile = AccountCreateParams.BusinessProfile.builder()
-                .setProductDescription("Clothes selling user")
-                .setSupportEmail(email)
-                .setName("User " + email)
-                .setMcc("7296")
-                .build();
+        return Account.create(accountParams);
+    }
 
-        AccountCreateParams.Individual individual = AccountCreateParams.Individual.builder()
-                .setFirstName("Admin")
-                .setLastName("Admin")
-                .setPhone("+48791591628")
-                .setEmail(email)
-                .setDob(EmptyParam.EMPTY)
-                .build();
-
-        AccountCreateParams accountParams = AccountCreateParams.builder()
+    private static AccountCreateParams getAccountCreateParams(
+            RegisterDto registerDto,
+            AccountCreateParams.Individual individual,
+            AccountCreateParams.BusinessProfile profile) {
+        return AccountCreateParams.builder()
                 .setType(AccountCreateParams.Type.EXPRESS)
                 .setCountry("PL")
-                .setEmail(email)
+                .setEmail(registerDto.getEmail())
                 .setIndividual(individual)
                 .setBusinessProfile(profile)
                 .setBusinessType(AccountCreateParams.BusinessType.INDIVIDUAL)
                 .build();
-        return Account.create(accountParams);
+    }
+
+    private static AccountCreateParams.BusinessProfile createBusinessProfile() {
+        return AccountCreateParams.BusinessProfile.builder()
+                .setProductDescription("Clothes selling user")
+                .setMcc("7296")
+                .build();
+    }
+
+    private static AccountCreateParams.Individual createIndividual(RegisterDto registerDto) {
+        return AccountCreateParams.Individual.builder()
+                .setFirstName(registerDto.getFirstName())
+                .setLastName(registerDto.getLastName())
+                .setPhone("+48"+registerDto.getPhoneNumber())
+                .build();
     }
 }
