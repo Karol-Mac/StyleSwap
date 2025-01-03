@@ -67,7 +67,7 @@ public class StorageServiceImpl implements StorageService {
 //    public void buyAllClothes(String email) {
 //        var storage = getStorageFromDB(email);
 //
-//        storage.getClothes().forEach(clothe -> orderService.createOrder(clothe.getId(), email));
+//        storage.getClothes().forEach(clothe -> orderService.order(clothe.getId(), email));
 //    }
 
     // FIXME: this might ba a bug - change loadData.sql file - every user should has a storage
