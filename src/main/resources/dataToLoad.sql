@@ -20,15 +20,15 @@ insert into users_roles (user_id,role_id) values (2, 2);
 insert into users_roles (user_id,role_id) values (3, 2);
 
 INSERT INTO categories (name, description, created_at, updated_at)
-VALUES ('T-Shirts', 'Category for various T-Shirts', DATE(NOW()), DATE(NOW()));
+            VALUES ('T-Shirts', 'Category for various T-Shirts', DATE(NOW()), DATE(NOW()));
 INSERT INTO categories (name, description, created_at, updated_at)
-VALUES ('Jeans', 'Category for different styles of Jeans', DATE(NOW()), DATE(NOW()));
+            VALUES ('Jeans', 'Category for different styles of Jeans', DATE(NOW()), DATE(NOW()));
 INSERT INTO categories (name, description, created_at, updated_at)
-VALUES ('Dresses', 'Category for elegant and casual Dresses', DATE(NOW()), DATE(NOW()));
+            VALUES ('Dresses', 'Category for elegant and casual Dresses', DATE(NOW()), DATE(NOW()));
 INSERT INTO categories (name, description, created_at, updated_at)
-VALUES ('Skirts', 'Category for various types of Skirts', DATE(NOW()), DATE(NOW()));
+            VALUES ('Skirts', 'Category for various types of Skirts', DATE(NOW()), DATE(NOW()));
 INSERT INTO categories (name, description, created_at, updated_at)
-VALUES ('Blouses', 'Category for stylish Blouses', DATE(NOW()), DATE(NOW()));
+            VALUES ('Blouses', 'Category for stylish Blouses', DATE(NOW()), DATE(NOW()));
 
 
 

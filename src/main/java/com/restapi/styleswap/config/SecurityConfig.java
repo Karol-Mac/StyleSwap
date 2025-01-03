@@ -59,6 +59,9 @@ public class SecurityConfig {
 
                              //clothes:
                              .requestMatchers(HttpMethod.GET, "/api/clothes/**").permitAll()
+
+                             //webhook:
+                             .requestMatchers(HttpMethod.POST, "/api/orders/webhook").permitAll()
                              .anyRequest().authenticated()
                             )
                 .exceptionHandling(exception ->
