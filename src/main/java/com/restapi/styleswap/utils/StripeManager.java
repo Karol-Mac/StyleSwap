@@ -14,7 +14,7 @@ public class StripeManager {
     public static PaymentIntent createPaymentIntent(Long amount, String account_Id) throws StripeException {
         PaymentIntentCreateParams params =
                 PaymentIntentCreateParams.builder()
-                        .setAmount(amount)
+                        .setAmount(amount * 100)
                         .setCurrency("pln")
                         .setAutomaticPaymentMethods(
                                 PaymentIntentCreateParams
