@@ -30,16 +30,18 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
-
+    private final StripeManager stripeManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserUtils userUtils;
 
     public AuthServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository,
-                           RoleRepository roleRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, UserUtils userUtils) {
+                           RoleRepository roleRepository, PasswordEncoder passwordEncoder, StripeManager stripeManager,
+                           JwtTokenProvider jwtTokenProvider, UserUtils userUtils) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.stripeManager = stripeManager;
         this.jwtTokenProvider = jwtTokenProvider;
         this.userUtils = userUtils;
     }
@@ -61,10 +63,10 @@ public class AuthServiceImpl implements AuthService {
         userUtils.checkIfUsernameOfEmailExist(registerDto);
         Role userRole = roleRepository.findByName("ROLE_USER").get();
 
-        Account stripeAccount = StripeManager.createStripeAccount(registerDto);
+        Account stripeAccount = stripeManager.createStripeAccount(registerDto);
         createAndSaveUserEntity(registerDto, stripeAccount, userRole);
 
-        return StripeManager.generateStripeRegisterLink(stripeAccount);
+        return stripeManager.generateStripeRegisterLink(stripeAccount);
     }
 
     private void createAndSaveUserEntity(RegisterDto registerDto, Account stripeAccount, Role userRole) {

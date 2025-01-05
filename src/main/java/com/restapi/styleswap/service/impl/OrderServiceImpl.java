@@ -23,12 +23,15 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final ClotheUtils clotheUtils;
     private final UserUtils userUtils;
+    private final StripeManager stripeManager;
 
 
-    public OrderServiceImpl(OrderRepository orderRepository, ClotheUtils clotheUtils, UserUtils userUtils) {
+    public OrderServiceImpl(OrderRepository orderRepository, ClotheUtils clotheUtils,
+                            UserUtils userUtils, StripeManager stripeManager) {
         this.orderRepository = orderRepository;
         this.clotheUtils = clotheUtils;
         this.userUtils = userUtils;
+        this.stripeManager = stripeManager;
     }
 
     @Override
@@ -36,7 +39,7 @@ public class OrderServiceImpl implements OrderService {
 
         var clothe = clotheUtils.getClotheFromDB(clotheId);
         var buyer = userUtils.getUser(email);
-        var paymentIntent = StripeManager.createPaymentIntent(
+        var paymentIntent = stripeManager.createPaymentIntent(
                 clothe.getPrice().longValue(),
                 buyer.getStripeAccountId());
 
