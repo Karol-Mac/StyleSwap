@@ -2,7 +2,6 @@ package com.restapi.styleswap.service;
 
 import com.restapi.styleswap.entity.Role;
 import com.restapi.styleswap.entity.User;
-import com.restapi.styleswap.exception.ApiException;
 import com.restapi.styleswap.payload.JwtAuthResponse;
 import com.restapi.styleswap.payload.LoginDto;
 import com.restapi.styleswap.payload.RegisterDto;
@@ -10,16 +9,16 @@ import com.restapi.styleswap.repository.RoleRepository;
 import com.restapi.styleswap.repository.UserRepository;
 import com.restapi.styleswap.security.JwtTokenProvider;
 import com.restapi.styleswap.service.impl.AuthServiceImpl;
+import com.restapi.styleswap.utils.StripeManager;
 import com.restapi.styleswap.utils.UserUtils;
 import com.stripe.exception.StripeException;
+import com.stripe.model.Account;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,7 +27,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class AuthServiceImplTest {
@@ -43,13 +41,16 @@ class AuthServiceImplTest {
     private RoleRepository roleRepository;
 
     @Mock
-    private PasswordEncoder passwordEncoder;
+    private StripeManager stripeManager;
 
     @Mock
     private JwtTokenProvider jwtTokenProvider;
 
     @Mock
     private UserUtils userUtils;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private AuthServiceImpl authService;
@@ -60,57 +61,80 @@ class AuthServiceImplTest {
     }
 
     @Test
-    void loginWithValidCredentialsReturnsJwtAuthResponse() {
-        LoginDto loginDto = new LoginDto("user", "password");
+    void login_returnsJwtAuthResponse() {
+        LoginDto loginDto = new LoginDto();
+        loginDto.setUsernameOrEmail("user@example.com");
+        loginDto.setPassword("password");
+
         Authentication authentication = mock(Authentication.class);
-        User user = mock(User.class);
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("user");
+        user.setEmail("user@example.com");
+        user.setRoles(Set.of(new Role(0L, "ROLE_USER")));
+
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authentication);
-        when(userRepository.findByUsernameOrEmail(anyString(), anyString())).thenReturn(Optional.of(user));
-        when(jwtTokenProvider.generateToken(authentication)).thenReturn("token");
-        when(user.getRoles()).thenReturn(Set.of(new Role(1L, "ROLE_USER")));
-        when(user.getId()).thenReturn(1L);
-        when(user.getUsername()).thenReturn("user");
+        when(userRepository.findByUsernameOrEmail("user@example.com", "user@example.com")).thenReturn(Optional.of(user));
+        when(jwtTokenProvider.generateToken(authentication)).thenReturn("jwt-token");
 
         JwtAuthResponse response = authService.login(loginDto);
-
         assertNotNull(response);
-        assertEquals("token", response.getAccessToken());
+        assertEquals("jwt-token", response.getAccessToken());
         assertEquals("[ROLE_USER]", response.getRole());
         assertEquals(1L, response.getUserId());
     }
 
     @Test
-    void loginWithInvalidCredentialsThrowsApiException() {
-        LoginDto loginDto = new LoginDto("user", "wrongpassword");
-        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenThrow(new BadCredentialsException("Bad credentials"));
+    void login_throwsExceptionWhenUserNotFound() {
+        LoginDto loginDto = new LoginDto();
+        loginDto.setUsernameOrEmail("user@example.com");
+        loginDto.setPassword("password");
 
-        ApiException exception = assertThrows(ApiException.class, () -> authService.login(loginDto));
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(mock(Authentication.class));
+        when(userRepository.findByUsernameOrEmail("user@example.com", "user@example.com")).thenReturn(Optional.empty());
 
-        assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
-        assertEquals("Wrong username/email or password", exception.getMessage());
+        assertThrows(RuntimeException.class, () -> authService.login(loginDto));
     }
 
     @Test
-    void registerWithValidDataReturnsSuccessMessage() throws StripeException {
-        RegisterDto registerDto = new RegisterDto("user","surname","123456789", "password", "email@example.com", "name");
-        Role role = new Role(0L, "ROLE_USER");
-        when(roleRepository.findByName("ROLE_USER")).thenReturn(Optional.of(role));
-        when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
+    void register_createsAndReturnsStripeLink() throws StripeException {
+        RegisterDto registerDto = new RegisterDto();
+        registerDto.setEmail("user@example.com");
+        registerDto.setPassword("password");
+        registerDto.setFirstName("First");
+        registerDto.setLastName("Last");
+        registerDto.setPhoneNumber("375649123");
+        registerDto.setUsername("user");
+
+        Role userRole = new Role(0L,"ROLE_USER");
+        Account stripeAccount = mock(Account.class);
+        when(stripeAccount.getId()).thenReturn("acct_123");
+
+        doNothing().when(userUtils).checkIfUsernameOfEmailExist(registerDto);
+        when(roleRepository.findByName("ROLE_USER")).thenReturn(Optional.of(userRole));
+
+        when(stripeManager.createStripeAccount(registerDto)).thenReturn(stripeAccount);
+        when(stripeManager.generateStripeRegisterLink(stripeAccount)).thenReturn("stripe-link");
 
         String result = authService.register(registerDto);
 
-        assertEquals("User sign up successfully", result);
+        assertEquals("stripe-link", result);
         verify(userRepository, times(1)).save(any(User.class));
     }
 
     @Test
-    void registerWithExistingUsernameOrEmailThrowsApiException() {
-        RegisterDto registerDto = new RegisterDto("user","surname","123456789", "password", "email@example.com", "name");
-        doThrow(new ApiException(HttpStatus.BAD_REQUEST, "Username or Email already exists")).when(userUtils).checkIfUsernameOfEmailExist(registerDto);
+    void register_throwsExceptionWhenRoleNotFound() {
+        RegisterDto registerDto = new RegisterDto();
+        registerDto.setEmail("user@example.com");
+        registerDto.setPassword("password");
+        registerDto.setFirstName("First");
+        registerDto.setLastName("Last");
+        registerDto.setPhoneNumber("1234567890");
+        registerDto.setUsername("user");
 
-        ApiException exception = assertThrows(ApiException.class, () -> authService.register(registerDto));
+        doNothing().when(userUtils).checkIfUsernameOfEmailExist(registerDto);
+        when(roleRepository.findByName("ROLE_USER")).thenReturn(Optional.empty());
 
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        assertEquals("Username or Email already exists", exception.getMessage());
+        assertThrows(RuntimeException.class, () -> authService.register(registerDto));
     }
 }

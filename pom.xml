@@ -11,8 +11,8 @@
 	<groupId>com.rest-api</groupId>
 	<artifactId>StyleSwap</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>vinted</name>
-	<description>REST API for vinted-like application</description>
+	<name>styleswap</name>
+	<description>REST API for platfrom to sell clothing</description>
 	<properties>
 		<java.version>20</java.version>
 	</properties>
