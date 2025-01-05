@@ -8,10 +8,12 @@ import com.stripe.model.PaymentIntent;
 import com.stripe.param.AccountCreateParams;
 import com.stripe.param.AccountLinkCreateParams;
 import com.stripe.param.PaymentIntentCreateParams;
+import org.springframework.stereotype.Component;
 
+@Component
 public class StripeManager {
 
-    public static PaymentIntent createPaymentIntent(Long amount, String account_Id) throws StripeException {
+    public PaymentIntent createPaymentIntent(Long amount, String account_Id) throws StripeException {
         PaymentIntentCreateParams params =
                 PaymentIntentCreateParams.builder()
                         .setAmount(amount * 100)
@@ -30,7 +32,7 @@ public class StripeManager {
         return PaymentIntent.create(params);
     }
 
-    public static String generateStripeRegisterLink(Account account) throws StripeException {
+    public String generateStripeRegisterLink(Account account) throws StripeException {
         AccountLinkCreateParams linkParams = AccountLinkCreateParams.builder()
                 .setAccount(account.getId())
                 .setType(AccountLinkCreateParams.Type.ACCOUNT_ONBOARDING)
@@ -41,7 +43,7 @@ public class StripeManager {
         return AccountLink.create(linkParams).getUrl();
     }
 
-    public static Account createStripeAccount(RegisterDto registerDto) throws StripeException {
+    public Account createStripeAccount(RegisterDto registerDto) throws StripeException {
         AccountCreateParams.BusinessProfile profile = createBusinessProfile();
         AccountCreateParams.Individual individual = createIndividual(registerDto);
         AccountCreateParams accountParams = getAccountCreateParams(registerDto, individual, profile);
@@ -49,7 +51,7 @@ public class StripeManager {
         return Account.create(accountParams);
     }
 
-    private static AccountCreateParams getAccountCreateParams(
+    private AccountCreateParams getAccountCreateParams(
             RegisterDto registerDto,
             AccountCreateParams.Individual individual,
             AccountCreateParams.BusinessProfile profile) {
@@ -63,14 +65,14 @@ public class StripeManager {
                 .build();
     }
 
-    private static AccountCreateParams.BusinessProfile createBusinessProfile() {
+    private AccountCreateParams.BusinessProfile createBusinessProfile() {
         return AccountCreateParams.BusinessProfile.builder()
                 .setProductDescription("Clothes selling user")
                 .setMcc("7296")
                 .build();
     }
 
-    private static AccountCreateParams.Individual createIndividual(RegisterDto registerDto) {
+    private AccountCreateParams.Individual createIndividual(RegisterDto registerDto) {
         return AccountCreateParams.Individual.builder()
                 .setFirstName(registerDto.getFirstName())
                 .setLastName(registerDto.getLastName())
