@@ -12,21 +12,21 @@ services:
     networks:
       - app-network
 
-  app:
-    container_name: app
-    build:
-      context: .
-    ports:
-      - "80:8080"
-    depends_on:
-      - mysqldb
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/styleswap
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
-    networks:
-      - app-network
-    platform: linux/amd64
+#  app:
+#    container_name: app
+#    build:
+#      context: .
+#    ports:
+#      - "80:8080"
+#    depends_on:
+#      - mysqldb
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/styleswap
+#      SPRING_DATASOURCE_USERNAME: root
+#      SPRING_DATASOURCE_PASSWORD: root
+#    networks:
+#      - app-network
+#    platform: linux/amd64
 
 
 networks:
