@@ -62,12 +62,9 @@ public class CategoryServiceimpl implements CategoryService {
     @Override
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
-    public String deleteCategory(long categoryId) {
+    public void deleteCategory(long categoryId) {
         Category category = getCategoryFromDB(categoryId);
-
         categoryRepository.delete(category);
-
-        return "Category successfully deleted!";
     }
 
     private Category getCategoryFromDB(long id){

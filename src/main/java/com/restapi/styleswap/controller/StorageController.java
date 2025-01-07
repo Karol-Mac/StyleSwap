@@ -2,6 +2,7 @@ package com.restapi.styleswap.controller;
 
 import com.restapi.styleswap.payload.ClotheDto;
 import com.restapi.styleswap.service.StorageService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/storage")
+@SecurityRequirement(name = "bearerAuth")
 public class StorageController {
 
     private final StorageService storageService;
