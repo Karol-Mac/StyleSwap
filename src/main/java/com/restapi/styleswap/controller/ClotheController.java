@@ -5,6 +5,7 @@ import com.restapi.styleswap.payload.ClotheDto;
 import com.restapi.styleswap.payload.ClotheResponse;
 import com.restapi.styleswap.service.ClothesService;
 import com.restapi.styleswap.utils.Constant;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -45,6 +46,7 @@ public class ClotheController {
 
 
     //OWNER-ONLY ACTIONS
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/my")
     public ResponseEntity<ClotheResponse> getAllUserClothes(
             @RequestParam(required = false, defaultValue = Constant.PAGE_NO) int pageNo,
@@ -56,6 +58,7 @@ public class ClotheController {
         return ResponseEntity.ok(clothesService.getMyClothes(pageNo, pageSize, sortBy, direction, principal.getName()));
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE })
     public ResponseEntity<ClotheDto> createClothe(@RequestPart("clothe") @Valid ClotheDto clotheDto,
                                                   @RequestPart("images") List<MultipartFile> images,
@@ -65,6 +68,7 @@ public class ClotheController {
         return new ResponseEntity<>(clothesService.addClothe(clotheDto, images, principal.getName()), HttpStatus.CREATED);
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @PutMapping(value = "/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE})
     public ResponseEntity<ClotheDto> updateClothe(@PathVariable Long id,
                                                   @RequestPart("clothe") @Valid ClotheDto clotheDto,
@@ -75,6 +79,7 @@ public class ClotheController {
         return ResponseEntity.ok(clothesService.updateClothe(id, clotheDto, newImages, deletedImages, principal.getName()));
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteClothe(@PathVariable long id, Principal principal){
         clothesService.deleteClothe(id, principal.getName());
