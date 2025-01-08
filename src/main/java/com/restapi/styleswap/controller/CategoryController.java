@@ -4,6 +4,7 @@ import com.restapi.styleswap.payload.CategoryDto;
 import com.restapi.styleswap.payload.CategoryEdditDto;
 import com.restapi.styleswap.service.CategoryService;
 import com.restapi.styleswap.utils.CategoryModelAssembler;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -25,6 +26,7 @@ public class CategoryController {
         this.assembler = assembler;
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping
     public ResponseEntity<EntityModel<CategoryDto>> createCategory(@RequestBody @Valid CategoryEdditDto categoryDto){
 
@@ -45,6 +47,7 @@ public class CategoryController {
         return ResponseEntity.ok(assembler.toModel(category));
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @PutMapping("/{categoryId}")
     public ResponseEntity<EntityModel<CategoryDto>> updateCategory(@PathVariable long categoryId,
                                                       @RequestBody @Valid CategoryEdditDto categoryDto){
@@ -53,6 +56,7 @@ public class CategoryController {
         return ResponseEntity.ok(assembler.toModel(updatedCategory));
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/{categoryId}")
     public ResponseEntity<String> deleteCategory(@PathVariable long categoryId){
         categoryService.deleteCategory(categoryId);

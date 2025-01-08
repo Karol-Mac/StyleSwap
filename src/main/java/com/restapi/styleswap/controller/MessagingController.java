@@ -3,6 +3,7 @@ package com.restapi.styleswap.controller;
 import com.restapi.styleswap.payload.ConversationDto;
 import com.restapi.styleswap.payload.MessageDto;
 import com.restapi.styleswap.service.MessagingService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/conversations")
+@SecurityRequirement(name = "bearerAuth")
 public class MessagingController {
     private final MessagingService messagingService;
 
