@@ -23,6 +23,8 @@ public class User {
 
     private String stripeAccountId;
 
+    private boolean stripeAccountCreated = false;
+
     @Column(nullable = false, unique = true)
     private String username;
 
