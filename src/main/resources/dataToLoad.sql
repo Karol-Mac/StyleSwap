@@ -4,14 +4,14 @@ insert into roles (name) values ('ROLE_ADMIN');
 insert into roles (name) values ('ROLE_USER');
 
  -- creating users
-insert into users (email, first_name, last_name, phone_number, stripe_account_id, password, username) values
-('admin@email.com', 'admin', 'lastName', '791591628', 'acct_1Qcq3Y4IhGeSDrw7', '$2a$10$Kcv0RMReIoG7unGNEdqbaO/oCvDkRHJ6.gjQ47bY6on98Ysvpy/7i', 'admin');
+insert into users (email, first_name, last_name, phone_number, stripe_account_id, password, username, stripe_account_created) values
+('admin@email.com', 'admin', 'lastName', '791591628', 'acct_1Qcq3Y4IhGeSDrw7', '$2a$10$Kcv0RMReIoG7unGNEdqbaO/oCvDkRHJ6.gjQ47bY6on98Ysvpy/7i', 'admin', true);
 
-insert into users (email, first_name, last_name, phone_number, stripe_account_id, password, username) values
-('user1@email.com', 'user1', 'lastName', '791591628', 'acct_1QcquDQQ0SpyHOcJ', '$2a$10$BO38kLt14mkRORfJOf0SRO4XOfsegJIJFLXze50hLqhrlbMXIeJem', 'user1');
+insert into users (email, first_name, last_name, phone_number, stripe_account_id, password, username, stripe_account_created) values
+('user1@email.com', 'user1', 'lastName', '791591628', 'acct_1QcquDQQ0SpyHOcJ', '$2a$10$BO38kLt14mkRORfJOf0SRO4XOfsegJIJFLXze50hLqhrlbMXIeJem', 'user1', true);
 
-insert into users (email, first_name, last_name, phone_number, stripe_account_id, password, username) values
-('user2@email.com', 'user2', 'lastName', '791591628', 'acct_1Qcqwg4JLoXbaqSO', '$2a$10$47m4oq68rn2phtIzCSIaEuIEA1ONGWEzcR590cRi2lXwwCqmpO0tm', 'user2');
+insert into users (email, first_name, last_name, phone_number, stripe_account_id, password, username, stripe_account_created) values
+('user2@email.com', 'user2', 'lastName', '791591628', 'acct_1Qcqwg4JLoXbaqSO', '$2a$10$47m4oq68rn2phtIzCSIaEuIEA1ONGWEzcR590cRi2lXwwCqmpO0tm', 'user2', true);
 
 
 -- give users specific roles

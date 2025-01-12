@@ -12,19 +12,17 @@ import com.restapi.styleswap.utils.OrderStatus;
 import com.stripe.model.Account;
 import com.stripe.model.Event;
 import com.stripe.model.PaymentIntent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Date;
 
 @Service
 public class WebhookHandlerImpl implements WebhookHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(WebhookHandlerImpl.class);
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
     private final ClotheRepository clotheRepository;
@@ -65,16 +63,9 @@ public class WebhookHandlerImpl implements WebhookHandler {
 
     @Transactional(propagation = Propagation.NESTED)
     void handleSucceedPaymentIntent(PaymentIntent paymentIntent) {
-        Order order = orderRepository.findByPaymentIntentId(paymentIntent.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Order", "paymentIntentId", paymentIntent.getId()));
+        Order order = handlePaymentIntentSucceedOrderData(paymentIntent);
 
-        order.setOrderStatus(OrderStatus.PAID);
-//        order.setCompletedDate();
-        log.warn("Data transakcji: {}", LocalDateTime.ofEpochSecond(paymentIntent.getLatestChargeObject().getCreated(), 0, ZoneOffset.UTC));
-        Clothe clothe = clotheRepository.findById(order.getClothe().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Clothe", "id", order.getClothe().getId()));
-
-        clothe.setAvailable(false);
+        handlePaymentIntentSucceedClotheData(order);
     }
 
     @Transactional(propagation = Propagation.NESTED)
@@ -85,5 +76,26 @@ public class WebhookHandlerImpl implements WebhookHandler {
     @Transactional(propagation = Propagation.NESTED)
     void handleFailedPaymentIntent(PaymentIntent paymentIntent) {
 
+    }
+
+    @Transactional(propagation = Propagation.NESTED)
+    void handlePaymentIntentSucceedClotheData(Order order) {
+        Clothe clothe = clotheRepository.findById(order.getClothe().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Clothe", "id", order.getClothe().getId()));
+
+        clothe.setAvailable(false);
+        clotheRepository.save(clothe);
+    }
+
+    @Transactional(propagation = Propagation.NESTED)
+    Order handlePaymentIntentSucceedOrderData(PaymentIntent paymentIntent) {
+        Order order = orderRepository.findByPaymentIntentId(paymentIntent.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Order", "paymentIntentId", paymentIntent.getId()));
+
+        order.setOrderStatus(OrderStatus.PAID);
+        order.setCompletedDate(LocalDateTime.ofInstant(     //TODO: test this on PC
+                new Date(paymentIntent.getLatestChargeObject().getCreated()).toInstant(),
+                ZoneOffset.UTC));
+        return orderRepository.save(order);
     }
 }
