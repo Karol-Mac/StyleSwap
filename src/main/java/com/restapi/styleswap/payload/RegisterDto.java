@@ -1,5 +1,6 @@
 package com.restapi.styleswap.payload;
 
+import com.restapi.styleswap.utils.Constant;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,7 +23,7 @@ public class RegisterDto {
              message = "enter only phone number (without counytry code)")
     private String phoneNumber;
 
-    @Size(min = 3, max = 50, message = "username need's to contain 3-50 characters")
+    @Size(min = 3, max = 50, message = Constant.USERNAME_VALIDATION_FAILED)
     @NotNull
     private String username;
     @Email(message = "email has to contain '@'.")

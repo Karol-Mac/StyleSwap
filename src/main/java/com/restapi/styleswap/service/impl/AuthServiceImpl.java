@@ -97,6 +97,7 @@ public class AuthServiceImpl implements AuthService {
     private JwtAuthResponse createAuthResponse(User user, Authentication authentication) {
         return JwtAuthResponse.builder()
                 .accessToken(jwtTokenProvider.generateToken(authentication))
+                .tokenType("Bearer")
                 .role(user.getRoles().stream().map(Role::getName).toList().toString())
                 .userId(user.getId())
                 .usernameOrEmail(authentication.getName())

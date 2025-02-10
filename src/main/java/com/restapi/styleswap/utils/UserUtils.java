@@ -19,9 +19,9 @@ public class UserUtils {
 
     public void checkIfUsernameOfEmailExist(RegisterDto registerDto){
         if(userRepository.existsByUsername(registerDto.getUsername()))
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Username is already taken");
+            throw new ApiException(HttpStatus.CONFLICT, "Username is already taken");
         if(userRepository.existsByEmail(registerDto.getEmail()))
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Email already exist");
+            throw new ApiException(HttpStatus.CONFLICT, "Email already exist");
     }
 
 
