@@ -10,6 +10,7 @@ import com.restapi.vinted.repository.CategoryRepository;
 import com.restapi.vinted.repository.ClotheRepository;
 import com.restapi.vinted.service.impl.ClothesServiceImpl;
 import com.restapi.vinted.utils.ClotheUtils;
+import com.restapi.vinted.utils.UserUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -42,6 +43,9 @@ public class ClothesServiceImplTest {
 
     @Mock
     private ImageService imageService;
+
+    @Mock
+    private UserUtils userUtils;
 
     @InjectMocks
     private ClothesServiceImpl clothesService;
@@ -195,6 +199,7 @@ public class ClothesServiceImplTest {
         clothe.setName("T-Shirt");
         clothe.setUser(new User(email));
 
+        when(userUtils.getUser(email)).thenReturn(new User(email));
         when(clotheUtils.mapToEntity(clotheDto)).thenReturn(clothe);
         when(clotheRepository.save(clothe)).thenReturn(clothe);
         when(clotheUtils.mapToDto(clothe)).thenReturn(clotheDto);
