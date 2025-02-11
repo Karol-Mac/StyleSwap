@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Date;
 
 @Service
 public class WebhookHandlerImpl implements WebhookHandler {
@@ -93,9 +92,10 @@ public class WebhookHandlerImpl implements WebhookHandler {
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "paymentIntentId", paymentIntent.getId()));
 
         order.setOrderStatus(OrderStatus.PAID);
-        order.setCompletedDate(LocalDateTime.ofInstant(     //TODO: test this on PC
-                new Date(paymentIntent.getLatestChargeObject().getCreated()).toInstant(),
-                ZoneOffset.UTC));
+        order.setCompletedDate(LocalDateTime.ofEpochSecond(
+                                paymentIntent.getLatestChargeObject().getCreated(),
+                                0,
+                                ZoneOffset.UTC));
         return orderRepository.save(order);
     }
 }

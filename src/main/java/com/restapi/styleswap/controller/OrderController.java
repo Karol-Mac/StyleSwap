@@ -6,8 +6,6 @@ import com.restapi.styleswap.service.WebhookHandler;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
 import com.stripe.net.Webhook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +20,6 @@ public class OrderController {
     @Value("${stripe.webhook.secret}")
     private String secret;
 
-    private static final Logger log = LoggerFactory.getLogger(OrderController.class);
     private final OrderService orderService;
     private final WebhookHandler webhookHandler;
 
