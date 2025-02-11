@@ -51,20 +51,6 @@ public class StripeManager {
         return Account.create(accountParams);
     }
 
-    private AccountCreateParams getAccountCreateParams(
-            RegisterDto registerDto,
-            AccountCreateParams.Individual individual,
-            AccountCreateParams.BusinessProfile profile) {
-        return AccountCreateParams.builder()
-                .setType(AccountCreateParams.Type.EXPRESS)
-                .setCountry("PL")
-                .setEmail(registerDto.getEmail())
-                .setIndividual(individual)
-                .setBusinessProfile(profile)
-                .setBusinessType(AccountCreateParams.BusinessType.INDIVIDUAL)
-                .build();
-    }
-
     private AccountCreateParams.BusinessProfile createBusinessProfile() {
         return AccountCreateParams.BusinessProfile.builder()
                 .setProductDescription("Clothes selling user")
@@ -77,6 +63,20 @@ public class StripeManager {
                 .setFirstName(registerDto.getFirstName())
                 .setLastName(registerDto.getLastName())
                 .setPhone("+48"+registerDto.getPhoneNumber())
+                .build();
+    }
+
+    private AccountCreateParams getAccountCreateParams(
+            RegisterDto registerDto,
+            AccountCreateParams.Individual individual,
+            AccountCreateParams.BusinessProfile profile) {
+        return AccountCreateParams.builder()
+                .setType(AccountCreateParams.Type.EXPRESS)
+                .setCountry("PL")
+                .setEmail(registerDto.getEmail())
+                .setIndividual(individual)
+                .setBusinessProfile(profile)
+                .setBusinessType(AccountCreateParams.BusinessType.INDIVIDUAL)
                 .build();
     }
 }
