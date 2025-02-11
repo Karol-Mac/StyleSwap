@@ -122,9 +122,8 @@ class CategoryServiceimplTest {
 
         when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
 
-        String result = categoryService.deleteCategory(1L);
+        categoryService.deleteCategory(1L);
 
-        assertEquals("Category successfully deleted!", result);
         verify(categoryRepository, times(1)).delete(category);
     }
 }
