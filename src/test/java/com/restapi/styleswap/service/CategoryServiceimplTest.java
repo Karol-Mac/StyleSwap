@@ -1,10 +1,12 @@
-package com.restapi.vinted.service;
+package com.restapi.styleswap.service;
 
-import com.restapi.vinted.exception.ResourceNotFoundException;
-import com.restapi.vinted.payload.CategoryDto;
-import com.restapi.vinted.payload.CategoryEdditDto;
-import com.restapi.vinted.repository.CategoryRepository;
-import com.restapi.vinted.service.impl.CategoryServiceimpl;
+
+import com.restapi.styleswap.entity.Category;
+import com.restapi.styleswap.exception.ResourceNotFoundException;
+import com.restapi.styleswap.payload.CategoryDto;
+import com.restapi.styleswap.payload.CategoryEdditDto;
+import com.restapi.styleswap.repository.CategoryRepository;
+import com.restapi.styleswap.service.impl.CategoryServiceimpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -14,7 +16,6 @@ import org.mockito.MockitoAnnotations;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import com.restapi.vinted.entity.Category;
 
 import static org.junit.jupiter.api.Assertions.*;
         import static org.mockito.Mockito.*;
