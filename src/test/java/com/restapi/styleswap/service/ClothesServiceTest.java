@@ -30,7 +30,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class ClothesServiceImplTest {
+public class ClothesServiceTest {
 
     @Mock
     private ClotheRepository clotheRepository;
