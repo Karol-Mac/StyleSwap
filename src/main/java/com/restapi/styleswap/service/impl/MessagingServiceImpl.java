@@ -1,7 +1,9 @@
 package com.restapi.styleswap.service.impl;
 
+import com.restapi.styleswap.entity.Clothe;
 import com.restapi.styleswap.entity.Conversation;
 import com.restapi.styleswap.entity.Message;
+import com.restapi.styleswap.entity.User;
 import com.restapi.styleswap.exception.ApiException;
 import com.restapi.styleswap.payload.ConversationDto;
 import com.restapi.styleswap.payload.MessageDto;
@@ -42,20 +44,11 @@ public class MessagingServiceImpl implements MessagingService {
     @Transactional
     public void startConversation(long clotheId, String email) {
         var clothe = clotheUtils.getClotheFromDB(clotheId);
-
         var buyer = userUtils.getUser(email);
 
-        if (clothe.getUser().getId() == buyer.getId())
-            throw new AccessDeniedException("We dont't talk to ourselves");
-        else if (!clothe.isAvailable())
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Clothe is not available");
-
-        var conversation = Conversation.builder()
-                .buyer(buyer)
-                .clothe(clothe)
-                .build();
-
-        conversationRepository.save(conversation);
+        validateOwnership(clotheId, email);
+        validateClotheAvailability(clothe);
+        createAndSaveConversation(buyer, clothe);
     }
 
     @Override
@@ -76,14 +69,11 @@ public class MessagingServiceImpl implements MessagingService {
     }
 
     @Override
+    @PreAuthorize("@userRepository.existsByEmail(#email)")
     public List<MessageDto> getMessages(long conversationId, String email) {
         var conversation = messagingUtils.getConversation(conversationId);
-        var currentUser = userUtils.getUser(email);
 
-        boolean isAuthorized = conversation.getBuyer().getId() == currentUser.getId() ||
-                clotheUtils.isOwner(conversation.getClothe().getId(), email);
-
-        if (!isAuthorized)
+        if (!isAuthorizedToSeeMessages(email, conversation))
             throw new AccessDeniedException("You don't have permission to see this message");
 
         return conversation.getMessages().stream().map(messagingUtils::mapToDto).toList();
@@ -92,22 +82,49 @@ public class MessagingServiceImpl implements MessagingService {
     @Override
     @Transactional
     public void sendMessage(long conversationId, String message, String email) {
-
         var conversation = messagingUtils.getConversation(conversationId);
+        boolean isBuyer = defineSenderRole(email, conversation);
 
-        boolean isBuyer;
+        createAndSaveMessage(message, conversation, isBuyer);
+    }
+
+    private boolean defineSenderRole(String email, Conversation conversation) {
         if (messagingUtils.isBuyer(conversation, email))
-            isBuyer = true;
+            return true;
         else if (clotheUtils.isOwner(conversation.getClothe().getId(), email))
-            isBuyer = false;
+            return false;
         else throw new ApiException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+    }
 
+    private void validateOwnership(long clotheId, String email) {
+        if (clotheUtils.isOwner(clotheId, email))
+            throw new AccessDeniedException("We don't talk to ourselves");
+    }
+
+    private void validateClotheAvailability(Clothe clothe) {
+        if (!clothe.isAvailable())
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Clothe is not available");
+    }
+
+    private void createAndSaveConversation(User buyer, Clothe clothe) {
+        var conversation = Conversation.builder()
+                .buyer(buyer)
+                .clothe(clothe)
+                .build();
+        conversationRepository.save(conversation);
+    }
+
+    private void createAndSaveMessage(String message, Conversation conversation, boolean isBuyer) {
         var messageEntity = Message.builder()
                 .conversation(conversation)
                 .message(message)
                 .isBuyer(isBuyer)
                 .build();
-
         messageRepository.save(messageEntity);
+    }
+
+    private boolean isAuthorizedToSeeMessages(String email, Conversation conversation) {
+        return messagingUtils.isBuyer(conversation, email) ||
+                clotheUtils.isOwner(conversation.getClothe().getId(), email);
     }
 }
