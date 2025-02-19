@@ -19,7 +19,7 @@
             Order, to reprezentacja pojedynczego zamówienia - 1 sprzedawca, 1 kupujący
             W momencie kupienia wszystkich ubrań w koszyku tworzone jest kilka zamówień (sprawdź czy się da)
 
-    -[ ] połącz się z dostawcą płatności: Adyen/Stripe/PayU <- możliwe, że są tam jakieś opłaty
+    -[x] połącz się z dostawcą płatności: Adyen/Stripe/PayU <- możliwe, że są tam jakieś opłaty
     
     -[ ] wysyłanie powiadomienia do sprzedawcy po zakupie jego ubrania
     
