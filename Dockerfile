@@ -1,7 +1,14 @@
+FROM maven:3.9.4-eclipse-temurin-20-alpine AS builder
+WORKDIR /app
+
+COPY pom.xml .
+COPY src/ ./src/
+RUN mvn clean package
+
 FROM openjdk:20-jdk-slim
 WORKDIR /app
 
-COPY target/styleswap-0.0.1-SNAPSHOT.jar /app/styleswap.jar
-EXPOSE 8080
+COPY --from=builder /app/target/StyleSwap-0.0.1-SNAPSHOT.jar /app/styleswap.jar
 
+EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "styleswap.jar"]
