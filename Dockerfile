@@ -10,5 +10,4 @@ WORKDIR /app
 
 COPY --from=builder /app/target/StyleSwap-0.0.1-SNAPSHOT.jar /app/styleswap.jar
 
-EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "styleswap.jar"]
