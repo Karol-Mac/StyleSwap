@@ -36,13 +36,6 @@ public class OrderController {
         return new ResponseEntity<>(clientSercet, HttpStatus.CREATED);
     }
 
-//    @PatchMapping("/{orderId}/cancel")
-//    public ResponseEntity<Void> cancelOrder(@PathVariable long orderId, Principal principal) {
-//        orderService.cancelOrder(orderId, principal.getName());
-//
-//        return ResponseEntity.ok().build();
-//    }
-
     @PostMapping("/webhook")
     public ResponseEntity<String> handleStripeEvent(
             @RequestBody String payload,
@@ -64,59 +57,6 @@ public class OrderController {
                     "Unhandled event type: " + eventType);
         }
     }
-
-
-//    @PostMapping("/webhook")
-//    public ResponseEntity<String> handleStripeEvent(
-//            @RequestBody String payload,
-//            @RequestHeader("Stripe-Signature") String sigHeader)
-//            throws StripeException {
-//
-//            Event event = Webhook.constructEvent(payload, sigHeader, secret);
-//
-//            String eventType = event.getType();
-//            PaymentIntent paymentIntent = null;
-//
-//            log.error("Event: {}", event.getType());
-//
-//            if ("account.updated".equals(event.getType())) {
-//                Account account = (Account) event.getDataObjectDeserializer().getObject().get();
-//                // Zaktualizuj status konta w bazie
-//                log.info("Account updated: {}", account.getId());
-//
-//                return ResponseEntity.ok("Webhook received XD");
-//            }
-//
-//            if (event.getDataObjectDeserializer().getObject().isPresent()) {
-//                paymentIntent = (PaymentIntent) event.getData().getObject();
-//            }
-//
-//            if (paymentIntent != null) {
-//                switch (eventType) {
-//                    case "payment_intent.succeeded" -> {
-//                        log.info("Payment succeeded for amount: {}", paymentIntent.getAmount());
-//                        log.info("Payment succeeded for account: {}", paymentIntent.getTransferData().getDestination());
-//                        // Dodaj logikę np. zapis do bazy danych
-//                    }
-//
-//                    case "payment_intent.payment_failed" ->
-//                            log.warn("Payment failed for amount: {}", paymentIntent.getAmount());
-//                    // Dodaj logikę np. powiadomienie użytkownika
-//
-//                    case "payment_intent.canceled" ->
-//                            log.warn("Payment was canceled for amount: {}", paymentIntent.getAmount());
-//                    // Dodaj logikę np. aktualizacja zamówienia
-//
-//                    default -> log.warn("Unhandled event type: {}", eventType);
-//                }
-//            }
-//
-//            return ResponseEntity.ok("Webhook received");
-////        } catch (Exception e) {
-////            log.error("Error processing webhook: {}", e.getMessage());
-////            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Webhook error");
-////        }
-//    }
 
     //TODO: rest of the endpoint's should be in AdminController class
     //      e.g. getAllOrder, getOrderById
