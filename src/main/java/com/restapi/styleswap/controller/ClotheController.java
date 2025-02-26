@@ -2,11 +2,14 @@ package com.restapi.styleswap.controller;
 
 import com.restapi.styleswap.exception.ApiException;
 import com.restapi.styleswap.payload.ClotheDto;
+import com.restapi.styleswap.payload.ClotheModelResponse;
 import com.restapi.styleswap.payload.ClotheResponse;
 import com.restapi.styleswap.service.ClothesService;
 import com.restapi.styleswap.utils.Constant;
+import com.restapi.styleswap.utils.assemblers.ClotheModelAssembler;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,62 +24,75 @@ import java.util.Optional;
 @RequestMapping("/api/clothes")
 public class ClotheController {
     private final ClothesService clothesService;
+    private final ClotheModelAssembler assembler;
 
-
-    public ClotheController(ClothesService clothesService) {
+    public ClotheController(ClothesService clothesService, ClotheModelAssembler assembler) {
         this.clothesService = clothesService;
+        this.assembler = assembler;
     }
 
     @GetMapping("/category/{categoryId}")
-    public ResponseEntity<?> getAllClothesFromCategory(
-                                        @PathVariable Long categoryId,
-                                        @RequestParam(required = false, defaultValue = Constant.PAGE_NO) int pageNo,
-                                        @RequestParam(required = false, defaultValue = Constant.PAGE_SIZE_LARGE) int pageSize,
-                                        @RequestParam(required = false, defaultValue = Constant.SORT_BY) String sortBy,
-                                        @RequestParam(required = false, defaultValue = Constant.DIRECTION) String direction){
+    public ResponseEntity<ClotheModelResponse> getAllClothesFromCategory(
+                        @PathVariable Long categoryId,
+                        @RequestParam(required = false, defaultValue = Constant.PAGE_NO) int pageNo,
+                        @RequestParam(required = false, defaultValue = Constant.PAGE_SIZE_LARGE) int pageSize,
+                        @RequestParam(required = false, defaultValue = Constant.SORT_BY) String sortBy,
+                        @RequestParam(required = false, defaultValue = Constant.DIRECTION) String direction){
 
-        return ResponseEntity.ok(
-                clothesService.getAllClothesByCategory(categoryId, pageNo, pageSize, sortBy, direction));
+        var response = clothesService.getAllClothesByCategory(
+                            categoryId, pageNo, pageSize, sortBy, direction);
+        ClotheModelResponse modelResponse = getClotheModelResponse(response);
+
+        return ResponseEntity.ok(modelResponse);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ClotheDto> getClothe(@PathVariable long id, Principal principal){
-        return ResponseEntity.ok(clothesService.getClotheById(id, Optional.ofNullable(principal)));
+    public ResponseEntity<EntityModel<ClotheDto>> getClothe(@PathVariable long id, Principal principal){
+
+        var clothe = clothesService.getClotheById(id, Optional.ofNullable(principal));
+        return ResponseEntity.ok(assembler.toModel(clothe));
     }
 
 
     //OWNER-ONLY ACTIONS
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/my")
-    public ResponseEntity<ClotheResponse> getAllUserClothes(
+    public ResponseEntity<ClotheModelResponse> getAllUserClothes(
             @RequestParam(required = false, defaultValue = Constant.PAGE_NO) int pageNo,
             @RequestParam(required = false, defaultValue = Constant.PAGE_SIZE_SMALL) int pageSize,
             @RequestParam(required = false, defaultValue = Constant.SORT_BY) String sortBy,
             @RequestParam(required = false, defaultValue = Constant.DIRECTION) String direction,
             Principal principal) {
 
-        return ResponseEntity.ok(clothesService.getMyClothes(pageNo, pageSize, sortBy, direction, principal.getName()));
+        var response = clothesService.getMyClothes(pageNo, pageSize, sortBy, direction, principal.getName());
+        ClotheModelResponse modelResponse = getClotheModelResponse(response);
+
+        return ResponseEntity.ok(modelResponse);
     }
 
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE })
-    public ResponseEntity<ClotheDto> createClothe(@RequestPart("clothe") @Valid ClotheDto clotheDto,
+    public ResponseEntity<EntityModel<ClotheDto>> createClothe(@RequestPart("clothe") @Valid ClotheDto clotheDto,
                                                   @RequestPart("images") List<MultipartFile> images,
                                                   Principal principal) {
-        if(images.size() > 5) throw new ApiException(HttpStatus.BAD_REQUEST, Constant.IMAGES_VALIDATION_FAILED);
+        if(images.size() > 5)
+            throw new ApiException(HttpStatus.BAD_REQUEST, Constant.IMAGES_VALIDATION_FAILED);
 
-        return new ResponseEntity<>(clothesService.addClothe(clotheDto, images, principal.getName()), HttpStatus.CREATED);
+        var createdClothe = clothesService.addClothe(clotheDto, images, principal.getName());
+        return new ResponseEntity<>(assembler.toModel(createdClothe), HttpStatus.CREATED);
     }
 
     @SecurityRequirement(name = "bearerAuth")
     @PutMapping(value = "/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE})
-    public ResponseEntity<ClotheDto> updateClothe(@PathVariable Long id,
+    public ResponseEntity<EntityModel<ClotheDto>> updateClothe(@PathVariable Long id,
                                                   @RequestPart("clothe") @Valid ClotheDto clotheDto,
                                                   @RequestPart(name = "newImages", required = false) List<MultipartFile> newImages,
                                                   @RequestPart(name = "deletedImages", required = false) List<String> deletedImages,
                                                   Principal principal) {
 
-        return ResponseEntity.ok(clothesService.updateClothe(id, clotheDto, newImages, deletedImages, principal.getName()));
+        var updatedClothe = clothesService.updateClothe(id, clotheDto, newImages, deletedImages, principal.getName());
+
+        return ResponseEntity.ok(assembler.toModel(updatedClothe));
     }
 
     @SecurityRequirement(name = "bearerAuth")
@@ -85,5 +101,11 @@ public class ClotheController {
         clothesService.deleteClothe(id, principal.getName());
 
         return ResponseEntity.noContent().build();
+    }
+
+    private ClotheModelResponse getClotheModelResponse(ClotheResponse clotheResponse) {
+        ClotheModelResponse modelResponse = ClotheModelResponse.from(clotheResponse);
+        modelResponse.setClothes(assembler.toCollectionModel(clotheResponse.getClothes()));
+        return modelResponse;
     }
 }

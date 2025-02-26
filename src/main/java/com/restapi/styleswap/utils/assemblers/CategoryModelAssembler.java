@@ -1,4 +1,4 @@
-package com.restapi.styleswap.utils;
+package com.restapi.styleswap.utils.assemblers;
 
 import com.restapi.styleswap.controller.CategoryController;
 import com.restapi.styleswap.payload.CategoryDto;

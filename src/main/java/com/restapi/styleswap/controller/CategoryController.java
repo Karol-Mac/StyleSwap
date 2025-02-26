@@ -4,7 +4,7 @@ import com.restapi.styleswap.exception.ErrorDetails;
 import com.restapi.styleswap.payload.CategoryDto;
 import com.restapi.styleswap.payload.CategoryEdditDto;
 import com.restapi.styleswap.service.CategoryService;
-import com.restapi.styleswap.utils.CategoryModelAssembler;
+import com.restapi.styleswap.utils.assemblers.CategoryModelAssembler;
 import com.restapi.styleswap.utils.Constant;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
