@@ -20,7 +20,7 @@ public class ClotheModelAssembler implements RepresentationModelAssembler<Clothe
                                 .getClothe(entity.getId(), null))
                                 .withSelfRel()
                                 .andAffordance(afford(methodOn(ClotheController.class)
-                                        .updateClothe(entity.getId(), entity, null, null, null)))
+                                        .updateClothe(entity.getId(), entity, null)))
                                 .andAffordance(afford(methodOn(ClotheController.class)
                                         .deleteClothe(entity.getId(), null)));
 

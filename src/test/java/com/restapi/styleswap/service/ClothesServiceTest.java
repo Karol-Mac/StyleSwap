@@ -20,11 +20,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,9 +38,6 @@ public class ClothesServiceTest {
 
     @Mock
     private ClotheUtils clotheUtils;
-
-    @Mock
-    private ImageService imageService;
 
     @Mock
     private UserUtils userUtils;
@@ -202,7 +197,7 @@ public class ClothesServiceTest {
         when(clotheUtils.mapToEntity(clotheDto)).thenReturn(clothe);
         when(clotheRepository.save(clothe)).thenReturn(clothe);
         when(clotheUtils.mapToDto(clothe)).thenReturn(clotheDto);
-        when(imageService.saveImage(any(MultipartFile.class))).thenReturn("image.jpg");
+        when(clotheUtils.saveClotheInDB(clothe)).thenReturn(clotheDto);
 
         ClotheDto result = clothesService.addClothe(clotheDto, email);
 
@@ -215,8 +210,6 @@ public class ClothesServiceTest {
         long clotheId = 1L;
         ClotheDto clotheDto = new ClotheDto();
         clotheDto.setName("Updated T-Shirt");
-        List<MultipartFile> newImages = Collections.emptyList();
-        List<String> deletedImages = Collections.emptyList();
         String email = "user@example.com";
 
         Clothe clothe = new Clothe();
@@ -226,9 +219,9 @@ public class ClothesServiceTest {
         when(clotheUtils.getClotheFromDB(clotheId)).thenReturn(clothe);
         when(clotheRepository.save(clothe)).thenReturn(clothe);
         when(clotheUtils.mapToDto(clothe)).thenReturn(clotheDto);
-        doNothing().when(imageService).updateImages(clothe, newImages, deletedImages);
+        when(clotheUtils.saveClotheInDB(clothe)).thenReturn(clotheDto);
 
-        ClotheDto result = clothesService.updateClothe(clotheId, clotheDto, newImages, deletedImages, email);
+        ClotheDto result = clothesService.updateClothe(clotheId, clotheDto, email);
 
         assertNotNull(result);
         assertEquals("Updated T-Shirt", result.getName());

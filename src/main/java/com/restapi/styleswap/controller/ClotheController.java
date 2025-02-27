@@ -9,15 +9,12 @@ import com.restapi.styleswap.utils.assemblers.ClotheModelAssembler;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.security.Principal;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -82,24 +79,13 @@ public class ClotheController {
                 .body(assembler.toModel(createdClothe));
     }
 
-//    @PostMapping("/{id}/images")
-//    public ResponseEntity<Void> addImagesToClothe(@PathVariable Long id,
-//                                                 @RequestPart("images") List<MultipartFile> images,
-//                                                 Principal principal) {
-//
-//        clothesService.addImagesToClothe(id, images, principal.getName());
-//        return ResponseEntity.noContent().build();
-//    }
-
     @SecurityRequirement(name = "bearerAuth")
-    @PutMapping(value = "/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE})
+    @PutMapping(value = "/{id}")
     public ResponseEntity<EntityModel<ClotheDto>> updateClothe(@PathVariable Long id,
                                                   @RequestPart("clothe") @Valid ClotheDto clotheDto,
-                                                  @RequestPart(name = "newImages", required = false) List<MultipartFile> newImages,
-                                                  @RequestPart(name = "deletedImages", required = false) List<String> deletedImages,
                                                   Principal principal) {
 
-        var updatedClothe = clothesService.updateClothe(id, clotheDto, newImages, deletedImages, principal.getName());
+        var updatedClothe = clothesService.updateClothe(id, clotheDto, principal.getName());
 
         return ResponseEntity.ok(assembler.toModel(updatedClothe));
     }

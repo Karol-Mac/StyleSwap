@@ -8,7 +8,6 @@ import com.restapi.styleswap.payload.ClotheDto;
 import com.restapi.styleswap.payload.ClotheResponse;
 import com.restapi.styleswap.repository.CategoryRepository;
 import com.restapi.styleswap.repository.ClotheRepository;
-import com.restapi.styleswap.service.ImageService;
 import com.restapi.styleswap.service.ClothesService;
 import com.restapi.styleswap.utils.ClotheUtils;
 
@@ -20,10 +19,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -31,16 +28,14 @@ import java.util.Optional;
 public class ClothesServiceImpl implements ClothesService {
 
     private final ClotheRepository clotheRepository;
-    private final ImageService imageService;
     private final CategoryRepository categoryRepository;
     private final ClotheUtils clotheUtils;
     private final UserUtils userUtils;
 
 
-    public ClothesServiceImpl(ClotheRepository clotheRepository, ImageService imageService,
-                              CategoryRepository categoryRepository, ClotheUtils clotheUtils, UserUtils userUtils) {
+    public ClothesServiceImpl(ClotheRepository clotheRepository, CategoryRepository categoryRepository,
+                              ClotheUtils clotheUtils, UserUtils userUtils) {
         this.clotheRepository = clotheRepository;
-        this.imageService = imageService;
         this.categoryRepository = categoryRepository;
         this.clotheUtils = clotheUtils;
         this.userUtils = userUtils;
@@ -105,8 +100,7 @@ public class ClothesServiceImpl implements ClothesService {
     @Override
     @PreAuthorize("@clotheUtils.isOwner(#id, #email)")
     @Transactional
-    public ClotheDto updateClothe(long id, ClotheDto clotheDto,
-                                  List<MultipartFile> newImages, List<String> deletedImages,String email) {
+    public ClotheDto updateClothe(long id, ClotheDto clotheDto, String email) {
 
         Clothe clothe = clotheUtils.getClotheFromDB(id);
 
@@ -118,8 +112,6 @@ public class ClothesServiceImpl implements ClothesService {
         clothe.setAvailable(clotheDto.isAvailable());
 
         clothe.setCategory(new Category(clotheDto.getCategoryId()));
-
-        imageService.updateImages(clothe, newImages, deletedImages);
 
         return clotheUtils.saveClotheInDB(clothe);
     }
