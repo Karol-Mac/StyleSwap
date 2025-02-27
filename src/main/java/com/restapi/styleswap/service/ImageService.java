@@ -10,9 +10,7 @@ public interface ImageService {
 
     Resource getImage(String imageName) throws IOException;
 
-    void updateImages(Long clotheId, List<MultipartFile> newImages, List<String> deletedImages);
+    void deleteImages(long clotheId, List<String> imageNames, String email);
 
-    void deleteImage(String imageName);
-
-    void saveImage(long clotheId, List<MultipartFile> files, String email);
+    void uploadImages(long clotheId, List<MultipartFile> files, String email);
 }

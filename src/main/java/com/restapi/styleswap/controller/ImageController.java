@@ -35,18 +35,16 @@ public class ImageController {
                                               @RequestParam("files") List<MultipartFile> files,
                                               Principal principal) {
 
-        imageService.saveImage(id, files, principal.getName());
+        imageService.uploadImages(id, files, principal.getName());
         return ResponseEntity.ok("Images uploaded successfully");
     }
 
-    @PutMapping(value = "/clothes/{id}/images")
-    public ResponseEntity<Void> updateClothe(@PathVariable Long id,
-                                                               @RequestParam(name = "newImages", required = false) List<MultipartFile> newImages,
-                                                               @RequestPart(name = "deletedImages", required = false) List<String> deletedImages,
-                                                               Principal principal) {
+    @DeleteMapping(value = "/clothes/{id}/images")
+    public ResponseEntity<String> deleteImage(@PathVariable Long id,
+                                              @RequestParam(name = "deletedImages") List<String> deletedImages,
+                                              Principal principal) {
 
-        imageService.updateImages(id, newImages, deletedImages);
-//        return ResponseEntity.ok(assembler.toModel(updatedClothe));
-        return null;
+        imageService.deleteImages(id, deletedImages, principal.getName());
+        return ResponseEntity.ok("Images deleted successfully");
     }
 }

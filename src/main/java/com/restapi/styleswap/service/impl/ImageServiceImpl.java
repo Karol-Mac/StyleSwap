@@ -33,46 +33,13 @@ public class ImageServiceImpl implements ImageService {
     }
 
     private String saveImage(MultipartFile file){
-        if(file.isEmpty()) throw new ApiException( HttpStatus.BAD_REQUEST,"Image file must not be empty");
+        if(file.isEmpty())
+            throw new ApiException( HttpStatus.BAD_REQUEST, "Image file must not be empty");
 
-        String imageName = UUID.randomUUID()+ "_" + file.getOriginalFilename();
         Path directoryPath = Paths.get(imageDirectory);
+        createDirectoryIfNeeded(directoryPath);
 
-        if (!Files.exists(directoryPath)) {
-            try {
-                Files.createDirectories(directoryPath);
-            } catch (IOException e) {
-                throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-            }
-        }
-
-        Path filePath = directoryPath.resolve(imageName);
-        try {
-            Files.write(filePath, file.getBytes());
-        } catch (IOException e) {
-            throw new ApiException(HttpStatus.CONFLICT , e.getMessage());
-        }
-
-        return imageName;
-    }
-
-    @Override
-    public void updateImages(Long clotheId, List<MultipartFile> newImages, List<String> deletedImages) {
-
-        Clothe clothe = clotheUtils.getClotheFromDB(clotheId);
-
-        if (deletedImages != null && !deletedImages.isEmpty()) {
-            clothe.getImages().removeAll(deletedImages);
-            deletedImages.forEach(this::deleteImage);
-        }
-
-        if(newImages == null) return;
-        else if(clothe.getImages().size() + newImages.size() > 5)
-            throw new ApiException(HttpStatus.BAD_REQUEST, Constant.IMAGES_VALIDATION_FAILED);
-        else if (newImages != null && !newImages.isEmpty()) {
-            var newImageNames = newImages.stream().map(this::saveImage).toList();
-            clothe.getImages().addAll(newImageNames);
-        }
+        return saveFileOnDisk(file, directoryPath);
     }
 
     @Override
@@ -92,9 +59,55 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public void deleteImage(String imageName) {
-        Path filePath = Paths.get(imageDirectory).resolve(imageName);
+    @PreAuthorize("@clotheUtils.isOwner(#clotheId, #email)")
+    public void deleteImages(long clotheId, List<String> files, String email) {
+        Clothe clothe = clotheUtils.getClotheFromDB(clotheId);
 
+        validIfAllImagesBelongToClothe(clotheId, files, clothe);
+
+        files.forEach(file -> {
+            deleteImage(file);
+            clothe.getImages().remove(file);
+        });
+
+        clotheUtils.saveClotheInDB(clothe);
+    }
+
+    @Override
+    @PreAuthorize("@clotheUtils.isOwner(#clotheId, #email)")
+    public void uploadImages(long clotheId, List<MultipartFile> files, String email) {
+        Clothe clothe = clotheUtils.getClotheFromDB(clotheId);
+
+        if((clothe.getImages().size()+ files.size()) > 5)
+            throw new ApiException(HttpStatus.BAD_REQUEST, Constant.IMAGES_VALIDATION_FAILED);
+
+        List<String> imageNames = files.stream().map(this::saveImage).toList();
+
+        clothe.getImages().addAll(imageNames);
+        clotheUtils.saveClotheInDB(clothe);
+    }
+
+    private static String saveFileOnDisk(MultipartFile file, Path directoryPath) {
+        String imageName = UUID.randomUUID()+ "_" + file.getOriginalFilename();
+        try {
+            Files.write(directoryPath.resolve(imageName), file.getBytes());
+        } catch (IOException e) {
+            throw new ApiException(HttpStatus.CONFLICT , e.getMessage());
+        }
+        return imageName;
+    }
+
+    private static void createDirectoryIfNeeded(Path directoryPath) {
+        if (!Files.exists(directoryPath))
+            try {
+                Files.createDirectories(directoryPath);
+            } catch (IOException e) {
+                throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            }
+    }
+
+    private void deleteImage(String imageName) {
+        Path filePath = Paths.get(imageDirectory).resolve(imageName);
         if (Files.exists(filePath)) {
             try {
                 Files.delete(filePath);
@@ -102,21 +115,16 @@ public class ImageServiceImpl implements ImageService {
                 throw new ApiException(HttpStatus.CONFLICT,
                         "Could not delete the file: " + imageName);
             }
-        } else {
-            throw new ResourceNotFoundException("File", imageName);
         }
+        else throw new ResourceNotFoundException("File", imageName);
     }
 
-    @Override
-    @PreAuthorize("@clotheUtils.isOwner(#clotheId, #email)")
-    public void saveImage(long clotheId, List<MultipartFile> files, String email) {
-        if(files.size() > 5)
-            throw new ApiException(HttpStatus.BAD_REQUEST, Constant.IMAGES_VALIDATION_FAILED);
-
-        Clothe clothe = clotheUtils.getClotheFromDB(clotheId);
-        List<String> imageNames = files.stream().map(this::saveImage).toList();
-
-        clothe.setImages(imageNames);
-        clotheUtils.saveClotheInDB(clothe);
+    private static void validIfAllImagesBelongToClothe(long clotheId,
+                                                List<String> files,
+                                                Clothe clothe) {
+        String errosMessage = "Image {0} doesn't belong to clothe with id: " + clotheId;
+        for (String file : files)
+            if (!clothe.getImages().contains(file))
+                throw new RuntimeException(errosMessage.formatted(file));
     }
 }
