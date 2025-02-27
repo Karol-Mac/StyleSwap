@@ -1,6 +1,5 @@
 package com.restapi.styleswap.controller;
 
-import com.restapi.styleswap.exception.ApiException;
 import com.restapi.styleswap.payload.ClotheDto;
 import com.restapi.styleswap.payload.ClotheModelResponse;
 import com.restapi.styleswap.payload.ClotheResponse;
@@ -10,12 +9,13 @@ import com.restapi.styleswap.utils.assemblers.ClotheModelAssembler;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -71,16 +71,25 @@ public class ClotheController {
     }
 
     @SecurityRequirement(name = "bearerAuth")
-    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE })
+    @PostMapping
     public ResponseEntity<EntityModel<ClotheDto>> createClothe(@RequestPart("clothe") @Valid ClotheDto clotheDto,
-                                                  @RequestPart("images") List<MultipartFile> images,
-                                                  Principal principal) {
-        if(images.size() > 5)
-            throw new ApiException(HttpStatus.BAD_REQUEST, Constant.IMAGES_VALIDATION_FAILED);
+                                                               Principal principal) {
 
-        var createdClothe = clothesService.addClothe(clotheDto, images, principal.getName());
-        return new ResponseEntity<>(assembler.toModel(createdClothe), HttpStatus.CREATED);
+        var createdClothe = clothesService.addClothe(clotheDto, principal.getName());
+
+        return ResponseEntity
+                .created(getLocation(createdClothe.getId()))
+                .body(assembler.toModel(createdClothe));
     }
+
+//    @PostMapping("/{id}/images")
+//    public ResponseEntity<Void> addImagesToClothe(@PathVariable Long id,
+//                                                 @RequestPart("images") List<MultipartFile> images,
+//                                                 Principal principal) {
+//
+//        clothesService.addImagesToClothe(id, images, principal.getName());
+//        return ResponseEntity.noContent().build();
+//    }
 
     @SecurityRequirement(name = "bearerAuth")
     @PutMapping(value = "/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE})
@@ -107,5 +116,13 @@ public class ClotheController {
         ClotheModelResponse modelResponse = ClotheModelResponse.from(clotheResponse);
         modelResponse.setClothes(assembler.toCollectionModel(clotheResponse.getClothes()));
         return modelResponse;
+    }
+
+    private URI getLocation(Object resourceId) {
+        return ServletUriComponentsBuilder
+                .fromCurrentRequestUri()
+                .path("/{resourceId}")
+                .buildAndExpand(resourceId)
+                .toUri();
     }
 }

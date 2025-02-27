@@ -3,11 +3,13 @@ import com.restapi.styleswap.entity.Clothe;
 import com.restapi.styleswap.exception.ApiException;
 import com.restapi.styleswap.exception.ResourceNotFoundException;
 import com.restapi.styleswap.service.ImageService;
+import com.restapi.styleswap.utils.ClotheUtils;
 import com.restapi.styleswap.utils.Constant;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,12 +20,17 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
-
 @Service
 public class ImageServiceImpl implements ImageService {
 
     @Value("${image.upload.dir}")
     private String imageDirectory;
+
+    private final ClotheUtils clotheUtils;
+
+    public ImageServiceImpl(ClotheUtils clotheUtils) {
+        this.clotheUtils = clotheUtils;
+    }
 
     @Override
     public String saveImage(MultipartFile file){
@@ -95,5 +102,18 @@ public class ImageServiceImpl implements ImageService {
         } else {
             throw new ResourceNotFoundException("File", imageName);
         }
+    }
+
+    @Override
+    @PreAuthorize("@clotheUtils.isOwner(#id, #email)")
+    public void saveImage(long id, List<MultipartFile> files, String email) {
+        if(files.size() > 5)
+            throw new ApiException(HttpStatus.BAD_REQUEST, Constant.IMAGES_VALIDATION_FAILED);
+
+        Clothe clothe = clotheUtils.getClotheFromDB(id);
+        List<String> imageNames = files.stream().map(this::saveImage).toList();
+
+        clothe.setImages(imageNames);
+        clotheUtils.saveClotheInDB(clothe);
     }
 }

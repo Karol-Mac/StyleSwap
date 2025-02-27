@@ -192,7 +192,6 @@ public class ClothesServiceTest {
     void addClothe_addsAndReturnsClothe() {
         ClotheDto clotheDto = new ClotheDto();
         clotheDto.setName("T-Shirt");
-        List<MultipartFile> images = Collections.emptyList();
         String email = "user@example.com";
 
         Clothe clothe = new Clothe();
@@ -205,7 +204,7 @@ public class ClothesServiceTest {
         when(clotheUtils.mapToDto(clothe)).thenReturn(clotheDto);
         when(imageService.saveImage(any(MultipartFile.class))).thenReturn("image.jpg");
 
-        ClotheDto result = clothesService.addClothe(clotheDto, images, email);
+        ClotheDto result = clothesService.addClothe(clotheDto, email);
 
         assertNotNull(result);
         assertEquals("T-Shirt", result.getName());

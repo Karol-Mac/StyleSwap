@@ -14,7 +14,7 @@ public interface ClothesService {
 
     ClotheDto getClotheById(long clotheId, Optional<Principal> principal);
 
-    ClotheDto addClothe(ClotheDto clotheDto, List<MultipartFile> images, String email);
+    ClotheDto addClothe(ClotheDto clotheDto, String email);
 
     ClotheResponse getMyClothes(int pageNo, int pageSize, String sortBy, String direction, String email);
 

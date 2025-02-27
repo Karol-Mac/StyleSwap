@@ -80,19 +80,14 @@ public class ClothesServiceImpl implements ClothesService {
     
     @Override
     @Transactional
-    public ClotheDto addClothe(ClotheDto clotheDto, List<MultipartFile> images, String email) {
+    public ClotheDto addClothe(ClotheDto clotheDto, String email) {
         User user = userUtils.getUser(email);       //TODO: can I get rid of it?
 
         Clothe clothe = clotheUtils.mapToEntity(clotheDto);
         clothe.setUser(user);
         clothe.setAvailable(true);
 
-        var imageNames = images.stream().map(imageService::saveImage).toList();
-        clothe.setImages(imageNames);
-
-        Clothe savedClothe = clotheRepository.save(clothe);
-
-        return clotheUtils.mapToDto(savedClothe);
+        return clotheUtils.saveClotheInDB(clothe);
     }
 
     @Override
@@ -126,8 +121,7 @@ public class ClothesServiceImpl implements ClothesService {
 
         imageService.updateImages(clothe, newImages, deletedImages);
 
-        Clothe updatedClothe = clotheRepository.save(clothe);
-        return clotheUtils.mapToDto(updatedClothe);
+        return clotheUtils.saveClotheInDB(clothe);
     }
 
     @Override

@@ -37,6 +37,10 @@ public class ClotheUtils {
         );
     }
 
+    public ClotheDto saveClotheInDB(Clothe clothe) {
+        return mapToDto(clotheRepository.save(clothe));
+    }
+
     public ClotheResponse getClotheResponse(int pageNo, int pageSize, Page<Clothe> clothes) {
         ClotheResponse clotheResponse = new ClotheResponse();
 

@@ -16,4 +16,6 @@ public interface ImageService {
     void updateImages(Clothe clothe, List<MultipartFile> newImages, List<String> deletedImages);
 
     void deleteImage(String imageName);
+
+    void saveImage(long id, List<MultipartFile> files, String email);
 }
