@@ -12,6 +12,7 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api")
 public class ImageController {
 
     private final ImageService imageService;
@@ -20,7 +21,7 @@ public class ImageController {
         this.imageService = imageService;
     }
 
-    @GetMapping("/api/images/{imageName}")
+    @GetMapping("/images/{imageName}")
     public ResponseEntity<Resource> getImage(@PathVariable String imageName) throws IOException{
         Resource image = imageService.getImage(imageName);
         return ResponseEntity.ok()
@@ -29,12 +30,23 @@ public class ImageController {
                 .body(image);
     }
 
-    @PostMapping("/api/clothes/{id}/images")
+    @PostMapping("/clothes/{id}/images")
     public ResponseEntity<String> uploadImage(@PathVariable long id,
                                               @RequestParam("files") List<MultipartFile> files,
                                               Principal principal) {
 
         imageService.saveImage(id, files, principal.getName());
         return ResponseEntity.ok("Images uploaded successfully");
+    }
+
+    @PutMapping(value = "/clothes/{id}/images")
+    public ResponseEntity<Void> updateClothe(@PathVariable Long id,
+                                                               @RequestParam(name = "newImages", required = false) List<MultipartFile> newImages,
+                                                               @RequestPart(name = "deletedImages", required = false) List<String> deletedImages,
+                                                               Principal principal) {
+
+        imageService.updateImages(id, newImages, deletedImages);
+//        return ResponseEntity.ok(assembler.toModel(updatedClothe));
+        return null;
     }
 }

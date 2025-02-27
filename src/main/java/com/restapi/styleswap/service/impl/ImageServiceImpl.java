@@ -32,8 +32,7 @@ public class ImageServiceImpl implements ImageService {
         this.clotheUtils = clotheUtils;
     }
 
-    @Override
-    public String saveImage(MultipartFile file){
+    private String saveImage(MultipartFile file){
         if(file.isEmpty()) throw new ApiException( HttpStatus.BAD_REQUEST,"Image file must not be empty");
 
         String imageName = UUID.randomUUID()+ "_" + file.getOriginalFilename();
@@ -57,7 +56,11 @@ public class ImageServiceImpl implements ImageService {
         return imageName;
     }
 
-    public void updateImages(Clothe clothe, List<MultipartFile> newImages, List<String> deletedImages) {
+    @Override
+    public void updateImages(Long clotheId, List<MultipartFile> newImages, List<String> deletedImages) {
+
+        Clothe clothe = clotheUtils.getClotheFromDB(clotheId);
+
         if (deletedImages != null && !deletedImages.isEmpty()) {
             clothe.getImages().removeAll(deletedImages);
             deletedImages.forEach(this::deleteImage);
@@ -105,12 +108,12 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    @PreAuthorize("@clotheUtils.isOwner(#id, #email)")
-    public void saveImage(long id, List<MultipartFile> files, String email) {
+    @PreAuthorize("@clotheUtils.isOwner(#clotheId, #email)")
+    public void saveImage(long clotheId, List<MultipartFile> files, String email) {
         if(files.size() > 5)
             throw new ApiException(HttpStatus.BAD_REQUEST, Constant.IMAGES_VALIDATION_FAILED);
 
-        Clothe clothe = clotheUtils.getClotheFromDB(id);
+        Clothe clothe = clotheUtils.getClotheFromDB(clotheId);
         List<String> imageNames = files.stream().map(this::saveImage).toList();
 
         clothe.setImages(imageNames);
