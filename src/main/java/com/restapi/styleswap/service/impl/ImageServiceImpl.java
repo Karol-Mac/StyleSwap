@@ -32,16 +32,6 @@ public class ImageServiceImpl implements ImageService {
         this.clotheUtils = clotheUtils;
     }
 
-    private String saveImage(MultipartFile file){
-        if(file.isEmpty())
-            throw new ApiException( HttpStatus.BAD_REQUEST, "Image file must not be empty");
-
-        Path directoryPath = Paths.get(imageDirectory);
-        createDirectoryIfNeeded(directoryPath);
-
-        return saveFileOnDisk(file, directoryPath);
-    }
-
     @Override
     public Resource getImage(String imageName) throws IOException {
         Path filePath = Paths.get(imageDirectory).resolve(imageName);
@@ -63,7 +53,7 @@ public class ImageServiceImpl implements ImageService {
     public void deleteImages(long clotheId, List<String> files, String email) {
         Clothe clothe = clotheUtils.getClotheFromDB(clotheId);
 
-        validIfAllImagesBelongToClothe(clotheId, files, clothe);
+        validIfAllImagesBelongToClothe(files, clothe);
 
         files.forEach(file -> {
             deleteImage(file);
@@ -85,6 +75,16 @@ public class ImageServiceImpl implements ImageService {
 
         clothe.getImages().addAll(imageNames);
         clotheUtils.saveClotheInDB(clothe);
+    }
+
+    private String saveImage(MultipartFile file) {
+        if(file.isEmpty())
+            throw new ApiException( HttpStatus.BAD_REQUEST, "Image file must not be empty");
+
+        Path directoryPath = Paths.get(imageDirectory);
+        createDirectoryIfNeeded(directoryPath);
+
+        return saveFileOnDisk(file, directoryPath);
     }
 
     private static String saveFileOnDisk(MultipartFile file, Path directoryPath) {
@@ -119,12 +119,11 @@ public class ImageServiceImpl implements ImageService {
         else throw new ResourceNotFoundException("File", imageName);
     }
 
-    private static void validIfAllImagesBelongToClothe(long clotheId,
-                                                List<String> files,
-                                                Clothe clothe) {
-        String errosMessage = "Image {0} doesn't belong to clothe with id: " + clotheId;
+    private static void validIfAllImagesBelongToClothe(List<String> files,
+                                                       Clothe clothe) {
+        String errosMessage = "Image %s doesn't belong to clothe with id: " + clothe.getId();
         for (String file : files)
             if (!clothe.getImages().contains(file))
-                throw new RuntimeException(errosMessage.formatted(file));
+                throw new ApiException(HttpStatus.BAD_REQUEST ,errosMessage.formatted(file));
     }
 }
