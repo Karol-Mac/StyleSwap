@@ -60,7 +60,7 @@ public class ClotheUtils {
                 .size(clotheDto.getSize())
                 .material(clotheDto.getMaterial())
                 .images(clotheDto.getImages())
-                .isAvailable(clotheDto.isAvailable())
+                .isAvailable(clotheDto.getIsAvailable())
                 .views(clotheDto.getViews())
                 .category(new Category(clotheDto.getCategoryId()))
                 .build();
@@ -85,7 +85,7 @@ public class ClotheUtils {
                 .updatedAt(clothe.getUpdatedAt())
                 .userId(clothe.getUser().getId())
                 .categoryId(clothe.getCategory().getId())
-                .conversasations(conversations)
+                .conversasationsIds(conversations)
                 .build();
     }
 }

@@ -46,7 +46,7 @@ public class ClotheDto {
 
     private String material;
 
-    private boolean isAvailable;
+    private Boolean isAvailable;
 
     private int views;
 
@@ -54,5 +54,5 @@ public class ClotheDto {
 
     private long userId;
 
-    private List<Long> conversasations;
+    private List<Long> conversasationsIds;
 }

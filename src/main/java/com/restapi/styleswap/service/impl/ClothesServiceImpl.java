@@ -109,7 +109,7 @@ public class ClothesServiceImpl implements ClothesService {
         clothe.setPrice(clotheDto.getPrice());
         clothe.setSize(clotheDto.getSize());
         clothe.setMaterial(clotheDto.getMaterial());
-        clothe.setAvailable(clotheDto.isAvailable());
+        clothe.setAvailable(clotheDto.getIsAvailable());
 
         clothe.setCategory(new Category(clotheDto.getCategoryId()));
 

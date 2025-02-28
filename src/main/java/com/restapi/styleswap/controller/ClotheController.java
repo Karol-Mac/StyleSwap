@@ -69,7 +69,7 @@ public class ClotheController {
 
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping
-    public ResponseEntity<EntityModel<ClotheDto>> createClothe(@RequestPart("clothe") @Valid ClotheDto clotheDto,
+    public ResponseEntity<EntityModel<ClotheDto>> createClothe(@RequestBody @Valid ClotheDto clotheDto,
                                                                Principal principal) {
 
         var createdClothe = clothesService.addClothe(clotheDto, principal.getName());
@@ -82,7 +82,7 @@ public class ClotheController {
     @SecurityRequirement(name = "bearerAuth")
     @PutMapping(value = "/{id}")
     public ResponseEntity<EntityModel<ClotheDto>> updateClothe(@PathVariable Long id,
-                                                  @RequestPart("clothe") @Valid ClotheDto clotheDto,
+                                                  @RequestBody @Valid ClotheDto clotheDto,
                                                   Principal principal) {
 
         var updatedClothe = clothesService.updateClothe(id, clotheDto, principal.getName());
