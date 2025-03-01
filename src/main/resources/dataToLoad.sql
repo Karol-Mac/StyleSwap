@@ -30,8 +30,6 @@ INSERT INTO categories (name, description, created_at, updated_at)
 INSERT INTO categories (name, description, created_at, updated_at)
             VALUES ('Blouses', 'Category for stylish Blouses', DATE(NOW()), DATE(NOW()));
 
-
-
 INSERT INTO clothes (name, description, price, size, created_at, updated_at, material, views, category_id, user_id, is_available)
             VALUES ('T-Shirt', 'Comfortable cotton t-shirt', 19.99, 'M', DATE(NOW()), DATE(NOW()), 'Cotton', 10, 1, 2, true);
 INSERT INTO clothes (name, description, price, size, created_at, updated_at, material, views, category_id, user_id, is_available)
@@ -51,3 +49,10 @@ INSERT INTO messages (message, is_buyer, created_at, conversation_id)
             VALUES ('Hello, I would like to buy this T-Shirt, but half the price', true, DATE(NOW()), 1);
 INSERT INTO messages (message, is_buyer, created_at, conversation_id)
             VALUES ('No, I won\'t sold it for 10$', false, DATE(NOW()), 1);
+
+INSERT INTO storages (user_id) VALUES (1);
+INSERT INTO storages (user_id) VALUES (2);
+INSERT INTO storages (user_id) VALUES (3);
+INSERT INTO storages_clothes (clothe_id, storage_id) VALUES (2, 2);
+INSERT INTO storages_clothes (clothe_id, storage_id) VALUES (4, 2);
+# INSERT INTO storages_clothes (clothe_id, storage_id) VALUES (3, 3);

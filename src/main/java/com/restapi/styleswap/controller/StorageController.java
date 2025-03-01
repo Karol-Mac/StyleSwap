@@ -29,8 +29,7 @@ public class StorageController {
     public ResponseEntity<Void> addClothe(@PathVariable int clotheId, Principal principal) {
 
         storageService.addClothe(clotheId, principal.getName());
-
-        return null;
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{clotheId}")

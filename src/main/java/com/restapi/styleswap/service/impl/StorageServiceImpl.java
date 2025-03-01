@@ -5,9 +5,10 @@ import com.restapi.styleswap.exception.ApiException;
 import com.restapi.styleswap.exception.ResourceNotFoundException;
 import com.restapi.styleswap.payload.ClotheDto;
 import com.restapi.styleswap.repository.StorageRepository;
-import com.restapi.styleswap.service.OrderService;
 import com.restapi.styleswap.service.StorageService;
 import com.restapi.styleswap.utils.ClotheUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -16,20 +17,20 @@ import java.util.List;
 @Service
 public class StorageServiceImpl implements StorageService {
 
+    private static final Logger log = LoggerFactory.getLogger(StorageServiceImpl.class);
     private final StorageRepository storageRepository;
     private final ClotheUtils clotheUtils;
-    private final OrderService orderService;
 
-    public StorageServiceImpl(StorageRepository storageRepository, ClotheUtils clotheUtils,
-                              OrderService orderService) {
+    public StorageServiceImpl(StorageRepository storageRepository, ClotheUtils clotheUtils) {
         this.storageRepository = storageRepository;
         this.clotheUtils = clotheUtils;
-        this.orderService = orderService;
     }
 
     @Override
     public List<ClotheDto> getStorage(String email) {
         var storage = getStorageFromDB(email);
+
+        log.info("User {} has {} clothes in storage", email, storage.getClothes().size());
 
         return storage.getClothes()
                 .stream()
@@ -70,9 +71,8 @@ public class StorageServiceImpl implements StorageService {
 //        storage.getClothes().forEach(clothe -> orderService.order(clothe.getId(), email));
 //    }
 
-    // FIXME: this might ba a bug - change loadData.sql file - every user should has a storage
     private Storage getStorageFromDB(String email) {
         return storageRepository.findByUserEmail(email)
-                .orElseThrow(() -> new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, "unexpected one"));
+                .orElseThrow(() -> new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, "user doesn't have storage"));
     }
 }
