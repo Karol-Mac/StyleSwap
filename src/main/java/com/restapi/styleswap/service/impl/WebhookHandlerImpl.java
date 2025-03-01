@@ -8,7 +8,7 @@ import com.restapi.styleswap.repository.ClotheRepository;
 import com.restapi.styleswap.repository.OrderRepository;
 import com.restapi.styleswap.repository.UserRepository;
 import com.restapi.styleswap.service.WebhookHandler;
-import com.restapi.styleswap.utils.OrderStatus;
+import com.restapi.styleswap.utils.enums.OrderStatus;
 import com.stripe.model.Account;
 import com.stripe.model.Event;
 import com.stripe.model.PaymentIntent;

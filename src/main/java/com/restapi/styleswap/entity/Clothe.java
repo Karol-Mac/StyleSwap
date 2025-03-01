@@ -1,6 +1,6 @@
 package com.restapi.styleswap.entity;
 
-import com.restapi.styleswap.utils.ClotheSize;
+import com.restapi.styleswap.utils.enums.ClotheSize;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

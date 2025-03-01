@@ -9,7 +9,7 @@ import com.restapi.styleswap.repository.RoleRepository;
 import com.restapi.styleswap.repository.UserRepository;
 import com.restapi.styleswap.security.JwtTokenProvider;
 import com.restapi.styleswap.service.impl.AuthServiceImpl;
-import com.restapi.styleswap.utils.StripeManager;
+import com.restapi.styleswap.utils.managers.StripeManager;
 import com.restapi.styleswap.utils.UserUtils;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Account;

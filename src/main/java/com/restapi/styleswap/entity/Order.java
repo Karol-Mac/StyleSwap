@@ -1,6 +1,6 @@
 package com.restapi.styleswap.entity;
 
-import com.restapi.styleswap.utils.OrderStatus;
+import com.restapi.styleswap.utils.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

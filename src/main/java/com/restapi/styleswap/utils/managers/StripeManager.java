@@ -1,4 +1,4 @@
-package com.restapi.styleswap.utils;
+package com.restapi.styleswap.utils.managers;
 
 import com.restapi.styleswap.payload.RegisterDto;
 import com.stripe.exception.StripeException;

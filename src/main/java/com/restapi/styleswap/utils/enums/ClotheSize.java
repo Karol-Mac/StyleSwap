@@ -1,5 +1,8 @@
-package com.restapi.styleswap.utils;
+package com.restapi.styleswap.utils.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum ClotheSize {
     XS("XS"),  S("S"), M("M"), L("L"), XL("XL"), XXL("XXL"),
     R32("32"), R34("34"), R36("36"),R38("38"),
@@ -8,9 +11,5 @@ public enum ClotheSize {
 
     ClotheSize(String code){
         this.code = code;
-    }
-
-    public String getCode() {
-        return code;
     }
 }

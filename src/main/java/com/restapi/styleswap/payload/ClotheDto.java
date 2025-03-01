@@ -1,6 +1,6 @@
 package com.restapi.styleswap.payload;
 
-import com.restapi.styleswap.utils.ClotheSize;
+import com.restapi.styleswap.utils.enums.ClotheSize;
 import com.restapi.styleswap.utils.Constant;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;

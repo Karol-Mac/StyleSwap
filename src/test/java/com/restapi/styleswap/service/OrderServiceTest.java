@@ -7,7 +7,7 @@ import com.restapi.styleswap.exception.ResourceNotFoundException;
 import com.restapi.styleswap.repository.OrderRepository;
 import com.restapi.styleswap.service.impl.OrderServiceImpl;
 import com.restapi.styleswap.utils.ClotheUtils;
-import com.restapi.styleswap.utils.StripeManager;
+import com.restapi.styleswap.utils.managers.StripeManager;
 import com.restapi.styleswap.utils.UserUtils;
 import com.stripe.exception.ApiException;
 import com.stripe.exception.StripeException;

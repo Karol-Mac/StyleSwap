@@ -1,5 +1,6 @@
 package com.restapi.styleswap.utils;
 
+import com.restapi.styleswap.utils.enums.ClotheSize;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
