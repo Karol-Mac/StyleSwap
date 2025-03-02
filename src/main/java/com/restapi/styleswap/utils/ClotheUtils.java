@@ -3,7 +3,6 @@ package com.restapi.styleswap.utils;
 import com.restapi.styleswap.entity.Category;
 import com.restapi.styleswap.entity.Clothe;
 import com.restapi.styleswap.entity.Conversation;
-import com.restapi.styleswap.entity.Storage;
 import com.restapi.styleswap.exception.ResourceNotFoundException;
 import com.restapi.styleswap.payload.ClotheDto;
 import com.restapi.styleswap.payload.ClotheResponse;
@@ -72,10 +71,6 @@ public class ClotheUtils {
                 clothe.getConversations().stream().map(Conversation::getId).toList() :
                 new ArrayList<Long>();
 
-        var storages = clothe.getStorages() != null ?
-                clothe.getStorages().stream().map(Storage::getId).toList() :
-                new ArrayList<Long>();
-
         return ClotheDto.builder()
                 .id(clothe.getId())
                 .name(clothe.getName())
@@ -91,7 +86,6 @@ public class ClotheUtils {
                 .userId(clothe.getUser().getId())
                 .categoryId(clothe.getCategory().getId())
                 .conversationIds(conversations)
-                .storageIds(storages)
                 .build();
     }
 }

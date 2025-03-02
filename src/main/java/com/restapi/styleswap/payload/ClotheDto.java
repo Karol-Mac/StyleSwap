@@ -55,5 +55,4 @@ public class ClotheDto {
     private long userId;
 
     private List<Long> conversationIds;
-    private List<Long> storageIds;
 }

@@ -12,7 +12,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -66,8 +65,8 @@ public class Clothe {
     @OneToMany(mappedBy = "clothe", cascade = CascadeType.ALL)
     private List<Conversation> conversations;
 
-    @ManyToMany(mappedBy = "clothes")
-    private Set<Storage> storages;
+//    @ManyToMany(mappedBy = "clothes")
+//    private Set<Storage> storages;
 
     @OneToOne(mappedBy = "clothe")
     private Order order;

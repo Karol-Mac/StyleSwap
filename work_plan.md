@@ -28,3 +28,8 @@
    -[ ] najpierw jednostowe - zrobione po za funkcjami Storage (refactor trwa)
    -[ ] potem integracyjne (od strony serwera)
    -[ ] pamiętaj o security
+
+
+Przeanalizuj wywołania Hibernate podczas wyświetlania ubrań ze Storage
+(kiedyś był tam bug pomiędzy User i Storage - rozwiązany przez dodanie customowego `hashCode`),
+ale sam nie do końca rozumiem czemu występował
