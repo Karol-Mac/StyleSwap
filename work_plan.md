@@ -11,23 +11,20 @@
         (jak na razie w teorii można w nich pisać <- nie można tylko zacząć konwersacji ze sprzedanym ubraniem)
          - po prostu usunąć 
          - zostawić, ale zablokować możliwość wysyłania wiadomości
-       
+
+-[ ] zwieksz poziom API na 3 - żeby działało jak strona internetowa
 
   -[x] dodanie zamówień
     -[x] dodaj encję Order i Storage.
             Storage będzie przechowywał ubrania, które użytkownik chcę zakupić
             Order, to reprezentacja pojedynczego zamówienia - 1 sprzedawca, 1 kupujący
             W momencie kupienia wszystkich ubrań w koszyku tworzone jest kilka zamówień (sprawdź czy się da)
-
     -[x] połącz się z dostawcą płatności: Adyen/Stripe/PayU <- możliwe, że są tam jakieś opłaty
-    
     -[ ] wysyłanie powiadomienia do sprzedawcy po zakupie jego ubrania
-    
     -[ ] system ocen/opinii użytkowników (po zakupie ubrań)
 
--[ ] zwieksz poziom API na 3 - żeby działało jak strona internetowa
 
  -[ ] napisz testy
-   -[ ] najpierw jednostowe (dla kontrolera od strony klienta)
+   -[ ] najpierw jednostowe - zrobione po za funkcjami Storage (refactor trwa)
    -[ ] potem integracyjne (od strony serwera)
    -[ ] pamiętaj o security
