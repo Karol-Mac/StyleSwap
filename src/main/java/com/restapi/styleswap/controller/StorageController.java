@@ -3,6 +3,7 @@ package com.restapi.styleswap.controller;
 import com.restapi.styleswap.payload.ClotheDto;
 import com.restapi.styleswap.service.StorageService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,14 +27,14 @@ public class StorageController {
     }
 
     @PostMapping("/{clotheId}")
-    public ResponseEntity<Void> addClothe(@PathVariable int clotheId, Principal principal) {
+    public ResponseEntity<Void> addClothe(@PathVariable long clotheId, Principal principal) {
 
         storageService.addClothe(clotheId, principal.getName());
-        return ResponseEntity.noContent().build();
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{clotheId}")
-    public ResponseEntity<Void> removeClothe(@PathVariable int clotheId, Principal principal) {
+    public ResponseEntity<Void> removeClothe(@PathVariable long clotheId, Principal principal) {
 
         storageService.removeClothe(clotheId, principal.getName());
         return ResponseEntity.noContent().build();

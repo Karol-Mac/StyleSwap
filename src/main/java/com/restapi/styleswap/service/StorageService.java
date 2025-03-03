@@ -7,9 +7,9 @@ import java.util.List;
 public interface StorageService {
     List<ClotheDto> getStorage(String email);
 
-    void addClothe(int clotheId, String email);
+    void addClothe(long clotheId, String email);
 
-    void removeClothe(int clotheId, String name);
+    void removeClothe(long clotheId, String name);
 
 //    void buyAllClothes(String name);
 }
