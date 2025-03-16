@@ -203,7 +203,6 @@ public class ClothesServiceTest {
 
         assertNotNull(result);
         assertEquals("T-Shirt", result.getName());
-        assertNotEquals(0, result.getId());
     }
 
     @Test

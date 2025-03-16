@@ -76,8 +76,7 @@ public class ClothesServiceImpl implements ClothesService {
     @Override
     @Transactional
     public ClotheDto addClothe(ClotheDto clotheDto, String email) {
-//        User user = userUtils.getUser(email);       //TODO: can I get rid of it?
-        User user = new User(email);
+        User user = userUtils.getUser(email);       //TODO: can I get rid of it?
 
         Clothe clothe = clotheUtils.mapToEntity(clotheDto);
         clothe.setUser(user);
@@ -104,15 +103,7 @@ public class ClothesServiceImpl implements ClothesService {
     public ClotheDto updateClothe(long id, ClotheDto clotheDto, String email) {
 
         Clothe clothe = clotheUtils.getClotheFromDB(id);
-
-        clothe.setName(clotheDto.getName());
-        clothe.setDescription(clotheDto.getDescription());
-        clothe.setPrice(clotheDto.getPrice());
-        clothe.setSize(clotheDto.getSize());
-        clothe.setMaterial(clotheDto.getMaterial());
-        clothe.setAvailable(clotheDto.getIsAvailable());
-
-        clothe.setCategory(new Category(clotheDto.getCategoryId()));
+        mapUpdatableFields(clotheDto, clothe);
 
         return clotheUtils.saveClotheInDB(clothe);
     }
@@ -132,5 +123,15 @@ public class ClothesServiceImpl implements ClothesService {
         Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name()) ?
                 Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         return PageRequest.of(pageNo, pageSize, sort);
+    }
+
+    private static void mapUpdatableFields(ClotheDto clotheDto, Clothe clothe) {
+        clothe.setName(clotheDto.getName());
+        clothe.setDescription(clotheDto.getDescription());
+        clothe.setPrice(clotheDto.getPrice());
+        clothe.setSize(clotheDto.getSize());
+        clothe.setMaterial(clotheDto.getMaterial());
+        clothe.setAvailable(clotheDto.getIsAvailable());
+        clothe.setCategory(new Category(clotheDto.getCategoryId()));
     }
 }
