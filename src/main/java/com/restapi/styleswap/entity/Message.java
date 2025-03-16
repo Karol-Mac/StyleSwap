@@ -25,7 +25,7 @@ public class Message {
     @Column(nullable = false, length = 500)
     private String message;
 
-    private boolean isBuyer;
+    private boolean ifFromBuyer;
 
     @CreationTimestamp
     private ZonedDateTime createdAt;

@@ -20,5 +20,5 @@ public class MessageDto {
     @Length(min = 1, max = 500)
     private String messageContent;
 
-    private Boolean isBuyer;
+    private Boolean ifFromBuyer;
 }
