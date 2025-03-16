@@ -110,7 +110,7 @@ class AuthServiceTest {
         Account stripeAccount = mock(Account.class);
         when(stripeAccount.getId()).thenReturn("acct_123");
 
-        doNothing().when(userUtils).checkIfUsernameOfEmailExist(registerDto);
+        doNothing().when(userUtils).validateUsernameAndEmailAvailability(registerDto);
         when(roleRepository.findByName("ROLE_USER")).thenReturn(Optional.of(userRole));
 
         when(stripeManager.createStripeAccount(registerDto)).thenReturn(stripeAccount);
@@ -132,7 +132,7 @@ class AuthServiceTest {
         registerDto.setPhoneNumber("1234567890");
         registerDto.setUsername("user");
 
-        doNothing().when(userUtils).checkIfUsernameOfEmailExist(registerDto);
+        doNothing().when(userUtils).validateUsernameAndEmailAvailability(registerDto);
         when(roleRepository.findByName("ROLE_USER")).thenReturn(Optional.empty());
 
         assertThrows(RuntimeException.class, () -> authService.register(registerDto));

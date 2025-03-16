@@ -36,8 +36,8 @@ public class StripeManager {
         AccountLinkCreateParams linkParams = AccountLinkCreateParams.builder()
                 .setAccount(account.getId())
                 .setType(AccountLinkCreateParams.Type.ACCOUNT_ONBOARDING)
-                .setReturnUrl("http://localhost:8080/api/categories")
-                .setRefreshUrl("http://localhost:8080/api/categories")
+                .setReturnUrl("http://localhost:8080/api/clothes/my")
+                .setRefreshUrl("http://localhost:8080/api/register")
                 .build();
 
         return AccountLink.create(linkParams).getUrl();
