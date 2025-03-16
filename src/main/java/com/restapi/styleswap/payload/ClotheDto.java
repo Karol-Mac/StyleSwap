@@ -46,7 +46,7 @@ public class ClotheDto {
 
     private String material;
 
-    private Boolean isAvailable;
+    private boolean isAvailable;
 
     private int views;
 
@@ -55,4 +55,12 @@ public class ClotheDto {
     private long userId;
 
     private List<Long> conversationIds;
+
+    public boolean getIsAvailable() {
+        return isAvailable;
+    }
+
+    public void setIsAvailable(boolean available) {
+        isAvailable = available;
+    }
 }

@@ -7,28 +7,26 @@ import com.restapi.styleswap.exception.ResourceNotFoundException;
 import com.restapi.styleswap.payload.ClotheDto;
 import com.restapi.styleswap.payload.ClotheResponse;
 import com.restapi.styleswap.repository.ClotheRepository;
+import com.restapi.styleswap.repository.ConversationRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
 
 @Component
 public class ClotheUtils {
 
     private final ClotheRepository clotheRepository;
+    private final ConversationRepository conversationRepository;
 
-    public ClotheUtils(ClotheRepository clotheRepository) {
+    public ClotheUtils(ClotheRepository clotheRepository, ConversationRepository conversationRepository) {
         this.clotheRepository = clotheRepository;
+        this.conversationRepository = conversationRepository;
     }
 
 
     @Transactional(readOnly = true)
     public boolean isOwner(long clotheId, String email) {
-        var clothe = getClotheFromDB(clotheId);
-        var allClothes = clotheRepository.findByUserEmail(email);
-
-        return allClothes.contains(clothe);
+        return clotheRepository.existsByIdAndUserEmail(clotheId, email);
     }
 
     public Clothe getClotheFromDB(long id) {
@@ -67,9 +65,10 @@ public class ClotheUtils {
     }
 
     public ClotheDto mapToDto(Clothe clothe) {
-        var conversations = clothe.getConversations() != null ?
-                clothe.getConversations().stream().map(Conversation::getId).toList() :
-                new ArrayList<Long>();
+        var conversations = conversationRepository
+                                .findByClotheId(clothe.getId())
+                                .map(Conversation::getId)
+                                .toList();
 
         return ClotheDto.builder()
                 .id(clothe.getId())

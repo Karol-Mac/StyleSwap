@@ -31,9 +31,9 @@ class ClotheRepositoryTest {
         Pageable pageable = PageRequest.of(0, 10);
         Clothe clothe = new Clothe();
         Page<Clothe> clothePage = new PageImpl<>(List.of(clothe), pageable, 1);
-        when(clotheRepository.findByCategoryIdAndIsAvailableTrue(1L, pageable)).thenReturn(clothePage);
+        when(clotheRepository.findByCategoryId(1L, pageable)).thenReturn(clothePage);
 
-        Page<Clothe> result = clotheRepository.findByCategoryIdAndIsAvailableTrue(1L, pageable);
+        Page<Clothe> result = clotheRepository.findByCategoryId(1L, pageable);
 
         assertNotNull(result);
         assertEquals(1, result.getTotalElements());
@@ -44,9 +44,9 @@ class ClotheRepositoryTest {
     void findByCategoryIdReturnsEmptyPageWhenNoClothesFound() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Clothe> clothePage = new PageImpl<>(Collections.emptyList(), pageable, 0);
-        when(clotheRepository.findByCategoryIdAndIsAvailableTrue(1L, pageable)).thenReturn(clothePage);
+        when(clotheRepository.findByCategoryId(1L, pageable)).thenReturn(clothePage);
 
-        Page<Clothe> result = clotheRepository.findByCategoryIdAndIsAvailableTrue(1L, pageable);
+        Page<Clothe> result = clotheRepository.findByCategoryId(1L, pageable);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());

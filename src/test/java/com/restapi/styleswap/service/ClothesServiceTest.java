@@ -67,7 +67,7 @@ public class ClothesServiceTest {
 
         Page<Clothe> clothesPage = new PageImpl<>(Collections.singletonList(clothe));
         when(categoryRepository.existsById(categoryId)).thenReturn(true);
-        when(clotheRepository.findByCategoryIdAndIsAvailableTrue(categoryId, PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending()))).thenReturn(clothesPage);
+        when(clotheRepository.findByCategoryId(categoryId, PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending()))).thenReturn(clothesPage);
         when(clotheUtils.getClotheResponse(pageNo, pageSize, clothesPage)).thenReturn(new ClotheResponse());
 
         ClotheResponse response = clothesService.getAllClothesByCategory(categoryId, pageNo, pageSize, sortBy, direction);
@@ -89,7 +89,7 @@ public class ClothesServiceTest {
         Page<Clothe> emptyPage = new PageImpl<>(Collections.emptyList());
         when(categoryRepository.existsById(categoryId)).thenReturn(true);
         when(clotheRepository
-                .findByCategoryIdAndIsAvailableTrue(categoryId,
+                .findByCategoryId(categoryId,
                                                     PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending())))
                 .thenReturn(emptyPage);
         when(clotheUtils.getClotheResponse(pageNo, pageSize, emptyPage)).thenReturn(new ClotheResponse());
@@ -203,6 +203,7 @@ public class ClothesServiceTest {
 
         assertNotNull(result);
         assertEquals("T-Shirt", result.getName());
+        assertNotEquals(0, result.getId());
     }
 
     @Test

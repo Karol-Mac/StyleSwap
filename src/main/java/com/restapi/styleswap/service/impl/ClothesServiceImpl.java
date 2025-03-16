@@ -52,7 +52,7 @@ public class ClothesServiceImpl implements ClothesService {
 
         //create Page<Clothe> with custom DB method
         Pageable page = getPageable(pageNo, pageSize, sortBy, direction);
-        Page<Clothe> clothes = clotheRepository.findByCategoryIdAndIsAvailableTrue(categoryId, page);
+        Page<Clothe> clothes = clotheRepository.findByCategoryId(categoryId, page);
 
         return clotheUtils.getClotheResponse(pageNo, pageSize, clothes);
     }
@@ -76,7 +76,8 @@ public class ClothesServiceImpl implements ClothesService {
     @Override
     @Transactional
     public ClotheDto addClothe(ClotheDto clotheDto, String email) {
-        User user = userUtils.getUser(email);       //TODO: can I get rid of it?
+//        User user = userUtils.getUser(email);       //TODO: can I get rid of it?
+        User user = new User(email);
 
         Clothe clothe = clotheUtils.mapToEntity(clotheDto);
         clothe.setUser(user);
