@@ -40,11 +40,11 @@ public class ImageController {
     }
 
     @DeleteMapping(value = "/clothes/{id}/images")
-    public ResponseEntity<String> deleteImage(@PathVariable Long id,
+    public ResponseEntity<Void> deleteImage(@PathVariable Long id,
                                               @RequestParam(name = "deletedImages") List<String> deletedImages,
                                               Principal principal) {
 
         imageService.deleteImages(id, deletedImages, principal.getName());
-        return ResponseEntity.ok("Images deleted successfully");
+        return ResponseEntity.noContent().build();
     }
 }
