@@ -46,9 +46,9 @@ INSERT INTO clothes (name, description, price, size, created_at, updated_at, mat
 insert into conversations (buyer_id, clothe_id) values (3, 1);
 
 INSERT INTO messages (message, is_buyer, created_at, conversation_id)
-            VALUES ('Hello, I would like to buy this T-Shirt, but half the price', true, DATE(NOW()), 1);
+            VALUES ('Hello, I would like to buy this T-Shirt but half the price', true, DATE(NOW()), 1);
 INSERT INTO messages (message, is_buyer, created_at, conversation_id)
-            VALUES ('No, I won\'t sold it for 10$', false, DATE(NOW()), 1);
+            VALUES ('No, I won\'t sell it for 10$', false, DATE(NOW()), 1);
 
 INSERT INTO storages (user_id) VALUES (1);
 INSERT INTO storages (user_id) VALUES (2);

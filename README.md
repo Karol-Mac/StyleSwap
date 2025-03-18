@@ -26,16 +26,53 @@ saving interesting clothes in their warehouse and performing real transactions
 - [x] download the project from GitHub and run it on your local machine
 - [x] download the docker image and run it on your local machine
 
-_If you decide to run the project on your local machine, the Application creates and loads example data automaticly_
+_If you decide to run the project on your local machine, the Application creates and loads example data automaticly_ [read more about it](#loaded-data)
 #### Hope you enjoy ;D
 
-## USING THE API
+## Using the API
 If you running API on your local machine, ramember that it runs on port 8080 by default.
 The API validates All data, so you can't send the wrong data to the server.
+The API uses JWT tokens to secure endpoints, so you need to log in to get the token.
 Two roles are created: ADMIN and USER.
 Some endpoints are available only for ADMIN, some only for USER (e.g., owner of exact clothing), and some for both.
 There are also endpoints available to everyone (ALL), for example, the login endpoint.
-TODO: write about loaded data
+
+### Loaded data:
+Beside roles, the API loads example data to the database:
+- Three users:
+
+    | username | email           | password | role  |
+    |----------|-----------------|----------|-------|
+    | admin    | admin@email.com | password | ADMIN |
+    | user1    | user1@email.com | password | USER  |
+    | user2    | user2@email.com | password | USER  |
+ - Five clothing categories: 
+
+    | ID | name    |
+    |----|---------|
+    | 1  | T-Shirt |
+    | 2  | Jeans   |
+    | 3  | Dresses |
+    | 4  | Skirt   | 
+    | 5  | Blouses | 
+ - Six clothes:
+
+| ID | name          | categoryID | owner |
+|----|---------------|------------|-------|
+| 1  | T-Shirt       | 1          | user1 |
+| 2  | Jeans         | 3          | user2 |
+| 3  | Dress         | 2          | user1 |
+| 4  | Skirt         | 3          | user2 |
+| 5  | Blouse        | 2          | user1 |
+| 6  | White T-Shirt | 1          | user1 |
+
+ - Every user also has storage:
+   - user1 has stored clothes with ID: 2
+   - user1 has stored clothes with ID: 3, 6
+
+ - One conversation between user2 and user1 with messages:
+    - (user2): "Hello, I would like to buy this T-Shirt but half the price"
+    - (user1): "No, I won't sell it for 10$"
 
 
 ## API ENDPOINTS
