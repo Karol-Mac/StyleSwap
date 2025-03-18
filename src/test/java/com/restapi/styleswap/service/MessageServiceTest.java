@@ -11,7 +11,7 @@
 //import com.restapi.styleswap.repository.MessageRepository;
 //import com.restapi.styleswap.service.impl.MessagingServiceImpl;
 //import com.restapi.styleswap.utils.ClotheUtils;
-//import com.restapi.styleswap.utils.MessagingUtils;
+//import com.restapi.styleswap.utils.MessageUtils;
 //import com.restapi.styleswap.utils.UserUtils;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;
@@ -38,7 +38,7 @@
 //    private ClotheUtils clotheUtils;
 //
 //    @Mock
-//    private MessagingUtils messagingUtils;
+//    private MessageUtils messagingUtils;
 //
 //    @Mock
 //    private UserUtils userUtils;
