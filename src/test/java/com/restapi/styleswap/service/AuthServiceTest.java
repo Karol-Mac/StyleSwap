@@ -98,39 +98,26 @@ class AuthServiceTest {
 
     @Test
     void register_createsAndReturnsStripeLink() throws StripeException {
-        RegisterDto registerDto = new RegisterDto();
-        registerDto.setEmail("user@example.com");
-        registerDto.setPassword("password");
-        registerDto.setFirstName("First");
-        registerDto.setLastName("Last");
-        registerDto.setPhoneNumber("375649123");
-        registerDto.setUsername("user");
 
+        RegisterDto registerDto = mock(RegisterDto.class);
         Role userRole = new Role(0L,"ROLE_USER");
         Account stripeAccount = mock(Account.class);
-        when(stripeAccount.getId()).thenReturn("acct_123");
 
         doNothing().when(userUtils).validateUsernameAndEmailAvailability(registerDto);
         when(roleRepository.findByName("ROLE_USER")).thenReturn(Optional.of(userRole));
 
         when(stripeManager.createStripeAccount(registerDto)).thenReturn(stripeAccount);
+        doNothing().when(userUtils).createAndSaveUserEntity(registerDto, stripeAccount, userRole);
         when(stripeManager.generateStripeRegisterLink(stripeAccount)).thenReturn("stripe-link");
 
         String result = authService.register(registerDto);
 
         assertEquals("stripe-link", result);
-        verify(userRepository, times(1)).save(any(User.class));
     }
 
     @Test
     void register_throwsExceptionWhenRoleNotFound() {
-        RegisterDto registerDto = new RegisterDto();
-        registerDto.setEmail("user@example.com");
-        registerDto.setPassword("password");
-        registerDto.setFirstName("First");
-        registerDto.setLastName("Last");
-        registerDto.setPhoneNumber("1234567890");
-        registerDto.setUsername("user");
+        RegisterDto registerDto = mock(RegisterDto.class);
 
         doNothing().when(userUtils).validateUsernameAndEmailAvailability(registerDto);
         when(roleRepository.findByName("ROLE_USER")).thenReturn(Optional.empty());
