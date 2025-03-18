@@ -1,6 +1,7 @@
 package com.restapi.styleswap.controller;
 
 import com.restapi.styleswap.payload.ConversationDto;
+import com.restapi.styleswap.payload.ConversationTemplate;
 import com.restapi.styleswap.service.ConversationService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.HttpStatus;
@@ -28,13 +29,21 @@ public class ConversationController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @GetMapping("/{convesrationId}")
+    public ResponseEntity<ConversationDto> getConversation(@PathVariable long convesrationId, Principal principal) {
+
+        return ResponseEntity.ok(conversationService.getConversation(convesrationId, principal.getName()));
+    }
+
     @GetMapping("/buying")
-    public ResponseEntity<List<ConversationDto>> getConversationsBuying(Principal principal) {
+    public ResponseEntity<List<ConversationTemplate>> getConversationsBuying(Principal principal) {
         return ResponseEntity.ok(conversationService.getConversationsBuying(principal.getName()));
     }
 
     @GetMapping("/selling")
-    public ResponseEntity<List<ConversationDto>> getConversationsSelling(@RequestParam long clotheId, Principal principal) {
+    public ResponseEntity<List<ConversationTemplate>> getConversationsSelling(
+                                    @RequestParam long clotheId,
+                                    Principal principal) {
         return ResponseEntity.ok(conversationService.getConversationsSelling(clotheId, principal.getName()));
     }
 }
