@@ -7,18 +7,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
+import java.time.ZonedDateTime;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class MessageDto {
-    private long buyerId;
-
-    private long clotheId;
 
     @NotNull
-    @Length(min = 1, max = 500)
+    @Length(min = 1, max = 250)
     private String messageContent;
 
     private Boolean ifFromBuyer;
+
+    private ZonedDateTime createdAt;
 }

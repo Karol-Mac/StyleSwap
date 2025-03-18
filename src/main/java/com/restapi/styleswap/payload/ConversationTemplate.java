@@ -11,12 +11,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ConversationDto {
+public class ConversationTemplate {
     private long id;
 
     private long buyerId;
 
     private long clotheId;
-
-    List<MessageDto> messages;
 }

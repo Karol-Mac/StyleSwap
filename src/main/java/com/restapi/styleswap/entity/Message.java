@@ -1,13 +1,11 @@
 package com.restapi.styleswap.entity;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-
 import java.time.ZonedDateTime;
 
 @Data
@@ -15,22 +13,13 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @Builder
 
-@Entity
-@Table(name = "messages")
+@Embeddable
 public class Message {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(nullable = false, length = 250)
+    private String content;
 
-    @Column(nullable = false, length = 500)
-    private String message;
-
-    private boolean ifFromBuyer;
+    private Boolean ifFromBuyer;
 
     @CreationTimestamp
     private ZonedDateTime createdAt;
-
-    @ManyToOne
-    @JoinColumn(name = "conversation_id")
-    private Conversation conversation;
 }

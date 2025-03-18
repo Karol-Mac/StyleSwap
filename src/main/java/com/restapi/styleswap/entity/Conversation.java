@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -28,7 +29,7 @@ public class Conversation {
     @JoinColumn(name = "clothe_id")
     private Clothe clothe;
 
-    @OneToMany(mappedBy = "conversation", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<Message> messages;
-
+    @ElementCollection
+    @CollectionTable(name = "conversation_messages", joinColumns = @JoinColumn(name = "conversation_id"))
+    private List<Message> messages = new ArrayList<>();
 }
