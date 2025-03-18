@@ -3,12 +3,14 @@ package com.restapi.styleswap.utils;
 import com.restapi.styleswap.entity.Category;
 import com.restapi.styleswap.entity.Clothe;
 import com.restapi.styleswap.entity.Conversation;
+import com.restapi.styleswap.exception.ApiException;
 import com.restapi.styleswap.exception.ResourceNotFoundException;
 import com.restapi.styleswap.payload.ClotheDto;
 import com.restapi.styleswap.payload.ClotheResponse;
 import com.restapi.styleswap.repository.ClotheRepository;
 import com.restapi.styleswap.repository.ConversationRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +35,11 @@ public class ClotheUtils {
         return clotheRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Clothe", "id", id)
         );
+    }
+
+    public void validateClotheAvailability(Clothe clothe) {
+        if (!clothe.isAvailable())
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Clothe is not available");
     }
 
     public ClotheDto saveClotheInDB(Clothe clothe) {

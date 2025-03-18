@@ -1,8 +1,5 @@
 package com.restapi.styleswap.service.impl;
 
-import com.restapi.styleswap.entity.Clothe;
-import com.restapi.styleswap.entity.Conversation;
-import com.restapi.styleswap.exception.ApiException;
 import com.restapi.styleswap.payload.ConversationDto;
 import com.restapi.styleswap.payload.ConversationTemplate;
 import com.restapi.styleswap.repository.ConversationRepository;
@@ -11,7 +8,6 @@ import com.restapi.styleswap.utils.ClotheUtils;
 import com.restapi.styleswap.utils.ConversationUtils;
 import com.restapi.styleswap.utils.MessageUtils;
 import com.restapi.styleswap.utils.UserUtils;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -44,7 +40,7 @@ public class ConversationServiceImpl implements ConversationService {
         var buyer = userUtils.getUser(email);
 
         validateOwnership(clotheId, email);
-        validateClotheAvailability(clothe);
+        clotheUtils.validateClotheAvailability(clothe);
         conversationUtils.createAndSaveConversation(buyer, clothe);
     }
 
@@ -69,7 +65,7 @@ public class ConversationServiceImpl implements ConversationService {
     public ConversationDto getConversation(long conversationId, String email) {
         var conversation = conversationUtils.getConversation(conversationId);
 
-        if (!isAuthorizedToSeeMessages(email, conversation))
+        if (!isAuthorizedToSeeMessages(email, conversation.getId(), conversation.getClothe().getId()))
             throw new AccessDeniedException("You don't have permission to see this message");
 
         return conversationUtils.mapToDto(conversation);
@@ -80,13 +76,8 @@ public class ConversationServiceImpl implements ConversationService {
             throw new AccessDeniedException("We don't talk to ourselves");
     }
 
-    private void validateClotheAvailability(Clothe clothe) {
-        if (!clothe.isAvailable())
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Clothe is not available");
-    }
-
-    private boolean isAuthorizedToSeeMessages(String email, Conversation conversation) {
-        return messageutils.isBuyer(conversation, email) ||
-                clotheUtils.isOwner(conversation.getClothe().getId(), email);
+    private boolean isAuthorizedToSeeMessages(String email, long conversationId, long clotheId) {
+        return messageutils.isBuyer(conversationId, email) ||
+                clotheUtils.isOwner(clotheId, email);
     }
 }

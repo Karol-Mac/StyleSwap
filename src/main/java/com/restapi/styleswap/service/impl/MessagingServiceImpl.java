@@ -1,6 +1,5 @@
 package com.restapi.styleswap.service.impl;
 
-import com.restapi.styleswap.entity.Conversation;
 import com.restapi.styleswap.service.MessageService;
 import com.restapi.styleswap.utils.ClotheUtils;
 import com.restapi.styleswap.utils.ConversationUtils;
@@ -29,15 +28,15 @@ public class MessagingServiceImpl implements MessageService {
     public void sendMessage(long conversationId, String message, String email) {
         var conversation = conversationUtils.getConversation(conversationId);
 
-        boolean isBuyer = isSenderTheBuyer(email, conversation);
+        boolean isBuyer = isSenderTheBuyer(email, conversation.getId(), conversation.getClothe().getId());
 
         messageutils.createAndSaveMessage(message, conversation, isBuyer);
     }
 
-    private boolean isSenderTheBuyer(String email, Conversation conversation) {
-        if (messageutils.isBuyer(conversation, email))
+    private boolean isSenderTheBuyer(String email, long conversationId, long clotheId) {
+        if (messageutils.isBuyer(conversationId, email))
             return true;
-        else if (clotheUtils.isOwner(conversation.getClothe().getId(), email))
+        else if (clotheUtils.isOwner(clotheId, email))
             return false;
         else throw new AccessDeniedException("You don't have permission to send this message");
     }

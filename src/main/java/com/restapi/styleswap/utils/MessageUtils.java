@@ -27,8 +27,8 @@ public class MessageUtils {
     }
 
     @Transactional(readOnly = true)
-    public boolean isBuyer(Conversation conversation, String email) {
-        return conversationRepository.existsByIdAndBuyerEmail(conversation.getId(), email);
+    public boolean isBuyer(long conversationId, String email) {
+        return conversationRepository.existsByIdAndBuyerEmail(conversationId, email);
     }
 
     public MessageDto mapToDto(Message message) {
