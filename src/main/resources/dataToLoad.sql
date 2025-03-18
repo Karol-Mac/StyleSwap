@@ -43,20 +43,11 @@ INSERT INTO clothes (name, description, price, size, created_at, updated_at, mat
 INSERT INTO clothes (name, description, price, size, created_at, updated_at, material, views, category_id, user_id, is_available)
             VALUES ('White T-Shirt', 'Comfortable cotton t-shirt', 24.99, 'M', DATE(NOW()), DATE(NOW()), 'Cotton', 10, 1, 2, false);
 
-# insert into conversations (buyer_id, clothe_id) values (3, 1);
-#
-# INSERT INTO messages (message, is_buyer, created_at, conversation_id)
-#             VALUES ('Hello, I would like to buy this T-Shirt but half the price', true, DATE(NOW()), 1);
-# INSERT INTO messages (message, is_buyer, created_at, conversation_id)
-#             VALUES ('No, I won\'t sell it for 10$', false, DATE(NOW()), 1);
 
--- Tworzenie konwersacji
 INSERT INTO conversations (buyer_id, clothe_id) VALUES (3, 1);
 
--- Dodawanie wiadomości jako elementów kolekcji (conversation_messages)
 INSERT INTO conversation_messages (conversation_id, content, if_from_buyer, created_at)
             VALUES (1, 'Hello, I would like to buy this T-Shirt but half the price', true, NOW());
-
 INSERT INTO conversation_messages (conversation_id, content, if_from_buyer, created_at)
             VALUES (1, 'No, I won''t sell it for 10$', false, NOW());
 

@@ -28,7 +28,8 @@ public class ConversationServiceImpl implements ConversationService {
     private final MessageUtils messageutils;
     private final ConversationUtils conversationUtils;
 
-    public ConversationServiceImpl(ConversationRepository conversationRepository, ClotheUtils clotheUtils, UserUtils userUtils, MessageUtils messageutils, ConversationUtils conversationUtils) {
+    public ConversationServiceImpl(ConversationRepository conversationRepository, ClotheUtils clotheUtils,
+                                   UserUtils userUtils, MessageUtils messageutils, ConversationUtils conversationUtils) {
         this.conversationRepository = conversationRepository;
         this.clotheUtils = clotheUtils;
         this.userUtils = userUtils;

@@ -4,7 +4,6 @@ import com.restapi.styleswap.entity.Conversation;
 import com.restapi.styleswap.entity.Message;
 import com.restapi.styleswap.payload.MessageDto;
 import com.restapi.styleswap.repository.ConversationRepository;
-import com.restapi.styleswap.repository.MessageRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,11 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class MessageUtils {
 
     private final ConversationRepository conversationRepository;
-    private final MessageRepository messageRepository;
 
-    public MessageUtils(ConversationRepository conversationRepository, MessageRepository messageRepository) {
+    public MessageUtils(ConversationRepository conversationRepository) {
         this.conversationRepository = conversationRepository;
-        this.messageRepository = messageRepository;
     }
 
     public void createAndSaveMessage(String content, Conversation conversation, boolean isBuyer) {
@@ -24,9 +21,8 @@ public class MessageUtils {
                 .content(content)
                 .ifFromBuyer(isBuyer)
                 .build();
-        var savedMessage = messageRepository.save(messageEntity);
 
-        conversation.getMessages().add(savedMessage);
+        conversation.getMessages().add(messageEntity);
         conversationRepository.save(conversation);
     }
 
