@@ -70,4 +70,8 @@ public class Clothe {
 
     @OneToOne(mappedBy = "clothe")
     private Order order;
+
+    public Clothe(long id) {
+        this.id = id;
+    }
 }

@@ -25,10 +25,10 @@ public class ConversationUtils {
                 .orElseThrow(() -> new ResourceNotFoundException("Conversation", "id", conversationId));
     }
 
-    public void createAndSaveConversation(User buyer, Clothe clothe) {
+    public void createAndSaveConversation(User buyer, Long clotheId) {
         var conversation = Conversation.builder()
                 .buyer(buyer)
-                .clothe(clothe)
+                .clothe(new Clothe(clotheId))
                 .build();
         conversationRepository.save(conversation);
     }

@@ -39,9 +39,8 @@ public class UserUtils {
     }
 
     public User getUser(String username, String email){
-        return userRepository.findByUsernameOrEmail(username, email)
-                .orElseThrow( () -> new UsernameNotFoundException(
-                        "User not found with username or email: "+ (username+email)));
+        return userRepository.findByUsernameOrEmail(username, email).orElseThrow(
+                () -> new UsernameNotFoundException("User not found with username or email: "+ (username+email)));
     }
 
     public void createAndSaveUserEntity(RegisterDto registerDto, Account stripeAccount, Role userRole) {
