@@ -2,6 +2,7 @@ package com.restapi.styleswap.controller;
 
 import com.restapi.styleswap.service.MessageService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.constraints.NotEmpty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -22,7 +23,7 @@ public class MessageController {
 
     @PostMapping("/{conversationId}/send")
     public ResponseEntity<Void> sendMessage(@PathVariable long conversationId,
-                                            @RequestBody String message,
+                                            @RequestBody @NotEmpty String message,
                                             Principal principal) {
 
         messageService.sendMessage(conversationId, message, principal.getName());

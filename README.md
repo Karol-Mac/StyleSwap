@@ -130,15 +130,10 @@ Beside roles, the API loads example data to the database:
 
 ### Messaging
 
-| REQUEST STATUS | LINKS                                        | REQUEST CODE  | RETURN TYPE                             | TYPE                       | ACCESS |
-|----------------|----------------------------------------------|---------------|-----------------------------------------|----------------------------|--------|
-| POST           | `/api/messaging/conversations`               | 201 (Created) | `ResponseEntity<Void>`                  | `long`, `String`           | USER   |
-| GET            | `/api/messaging/conversations/buying`        | 200 (OK)      | `ResponseEntity<List<ConversationDto>>` | `String`                   | USER   |
-| GET            | `/api/messaging/conversations/selling`       | 200 (OK)      | `ResponseEntity<List<ConversationDto>>` | `long`, `String`           | USER   |
-| GET            | `/api/messaging/conversations/{id}/messages` | 200 (OK)      | `ResponseEntity<List<MessageDto>>`      | `long`, `String`           | USER   |
-| POST           | `/api/messaging/conversations/{id}/messages` | 201 (Created) | `ResponseEntity<Void>`                  | `long`, `String`, `String` | USER   |
-
-
-# Examples:
-TODO: write about example api usages
-(with curl examples etc.)
+| REQUEST STATUS | LINKS                                 | REQUEST CODE  | RETURN TYPE                                  | TYPE              | ACCESS      |
+|----------------|---------------------------------------|---------------|----------------------------------------------|-------------------|-------------|
+| POST           | `/api/conversations?clotheId`         | 201 (Created) | `ResponseEntity<Void>`                       | `long`,           | USER, ADMIN |
+| GET            | `/api/conversations/buying`           | 200 (OK)      | `ResponseEntity<List<ConversationTemplate>>` |                   | USER, ADMIN |
+| GET            | `/api/conversations/selling?clotheId` | 200 (OK)      | `ResponseEntity<List<ConversationTemplate>>` | `long`            | USER, ADMIN |
+| GET            | `/api/conversations/{conversationId}` | 200 (OK)      | `ResponseEntity<ConversationDto>`            | `long`            | USER, ADMIN |
+| POST           | `/api/conversations/{id}/send`        | 201 (Created) | `ResponseEntity<Void>`                       | `long`, `String`, | USER, ADMIN |
