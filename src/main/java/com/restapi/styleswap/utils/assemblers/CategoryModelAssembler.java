@@ -19,7 +19,7 @@ public class CategoryModelAssembler implements RepresentationModelAssembler<Cate
         var selfLink = linkTo(methodOn(CategoryController.class).getCategoryById(entity.getId())).withSelfRel()
                 .andAffordance(afford(methodOn(CategoryController.class).updateCategory(entity.getId(), null)))
                 .andAffordance(afford(methodOn(CategoryController.class).deleteCategory(entity.getId())));
-        var allLinks = linkTo(methodOn(CategoryController.class).getAllCategories()).withRel("allCategories");
+        var allLinks = linkTo(methodOn(CategoryController.class).getAllCategories()).withRel("all_categories");
 
 
         return EntityModel.of(entity, selfLink, allLinks);

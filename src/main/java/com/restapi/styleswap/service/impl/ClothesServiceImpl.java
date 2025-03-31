@@ -44,6 +44,7 @@ public class ClothesServiceImpl implements ClothesService {
 
     @Override
     @PreAuthorize("permitAll()")
+    @Transactional(readOnly = true)
     public ClotheResponse getAllClothesByCategory(long categoryId, int pageNo, int pageSize,
                                                   String sortBy, String direction) {
 
