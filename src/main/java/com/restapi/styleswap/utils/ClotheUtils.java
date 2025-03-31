@@ -42,6 +42,7 @@ public class ClotheUtils {
             throw new ApiException(HttpStatus.BAD_REQUEST, "Clothe is not available");
     }
 
+    @Transactional
     public ClotheDto saveClotheInDB(Clothe clothe) {
         return mapToDto(clotheRepository.save(clothe));
     }
@@ -71,6 +72,7 @@ public class ClotheUtils {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public ClotheDto mapToDto(Clothe clothe) {
         var conversations = conversationRepository
                                 .findByClotheId(clothe.getId())

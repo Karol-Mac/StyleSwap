@@ -63,8 +63,7 @@ public class ClothesServiceImpl implements ClothesService {
     @PreAuthorize("permitAll()")
     public ClotheDto getClotheById(long clotheId, Optional<Principal> principal) {
 
-        Clothe clothe = clotheRepository.findById(clotheId)
-                .orElseThrow( ()-> new ResourceNotFoundException("Clothe", "id", clotheId));
+        Clothe clothe = clotheUtils.getClotheFromDB(clotheId);
 
         if(principal.isEmpty() || !clotheUtils.isOwner(clotheId, principal.get().getName())) {
             clothe.setViews(clothe.getViews() + 1);
