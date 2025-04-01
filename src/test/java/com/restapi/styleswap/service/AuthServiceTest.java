@@ -104,7 +104,7 @@ class AuthServiceTest {
         Account stripeAccount = mock(Account.class);
 
         doNothing().when(userUtils).validateUsernameAndEmailAvailability(registerDto);
-        when(roleRepository.findByName("ROLE_USER")).thenReturn(Optional.of(userRole));
+        when(roleRepository.findByNameContainingIgnoreCase("ROLE_USER")).thenReturn(Optional.of(userRole));
 
         when(stripeManager.createStripeAccount(registerDto)).thenReturn(stripeAccount);
         doNothing().when(userUtils).createAndSaveUserEntity(registerDto, stripeAccount, userRole);
@@ -120,7 +120,7 @@ class AuthServiceTest {
         RegisterDto registerDto = mock(RegisterDto.class);
 
         doNothing().when(userUtils).validateUsernameAndEmailAvailability(registerDto);
-        when(roleRepository.findByName("ROLE_USER")).thenReturn(Optional.empty());
+        when(roleRepository.findByNameContainingIgnoreCase("ROLE_USER")).thenReturn(Optional.empty());
 
         assertThrows(RuntimeException.class, () -> authService.register(registerDto));
     }

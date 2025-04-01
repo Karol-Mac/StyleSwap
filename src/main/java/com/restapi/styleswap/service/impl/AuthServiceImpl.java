@@ -56,7 +56,7 @@ public class AuthServiceImpl implements AuthService {
     public String register(RegisterDto registerDto) throws StripeException {
 
         userUtils.validateUsernameAndEmailAvailability(registerDto);
-        Role userRole = roleRepository.findByName("ROLE_USER").get();
+        Role userRole = roleRepository.findByNameContainingIgnoreCase("ROLE_USER").get();
 
         Account stripeAccount = stripeManager.createStripeAccount(registerDto);
         userUtils.createAndSaveUserEntity(registerDto, stripeAccount, userRole);
