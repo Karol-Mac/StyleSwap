@@ -1,14 +1,11 @@
 package com.restapi.styleswap.controller;
 
 import com.restapi.styleswap.payload.ClotheDto;
-import com.restapi.styleswap.payload.ClotheModelResponse;
 import com.restapi.styleswap.payload.ClotheResponse;
 import com.restapi.styleswap.service.ClothesService;
 import com.restapi.styleswap.utils.Constant;
-import com.restapi.styleswap.utils.assemblers.ClotheModelAssembler;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -21,15 +18,13 @@ import java.util.Optional;
 @RequestMapping("/api/clothes")
 public class ClotheController {
     private final ClothesService clothesService;
-    private final ClotheModelAssembler assembler;
 
-    public ClotheController(ClothesService clothesService, ClotheModelAssembler assembler) {
+    public ClotheController(ClothesService clothesService) {
         this.clothesService = clothesService;
-        this.assembler = assembler;
     }
 
     @GetMapping("/category/{categoryId}")
-    public ResponseEntity<ClotheModelResponse> getAllClothesFromCategory(
+    public ResponseEntity<ClotheResponse> getAllClothesFromCategory(
                         @PathVariable Long categoryId,
                         @RequestParam(required = false, defaultValue = Constant.PAGE_NO) int pageNo,
                         @RequestParam(required = false, defaultValue = Constant.PAGE_SIZE_LARGE) int pageSize,
@@ -38,23 +33,22 @@ public class ClotheController {
 
         var response = clothesService.getAllClothesByCategory(
                             categoryId, pageNo, pageSize, sortBy, direction);
-        ClotheModelResponse modelResponse = getClotheModelResponse(response);
 
-        return ResponseEntity.ok(modelResponse);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EntityModel<ClotheDto>> getClothe(@PathVariable long id, Principal principal){
+    public ResponseEntity<ClotheDto> getClothe(@PathVariable long id, Principal principal){
 
         var clothe = clothesService.getClotheById(id, Optional.ofNullable(principal));
-        return ResponseEntity.ok(assembler.toModel(clothe));
+        return ResponseEntity.ok(clothe);
     }
 
 
     //OWNER-ONLY ACTIONS
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/my")
-    public ResponseEntity<ClotheModelResponse> getAllUserClothes(
+    public ResponseEntity<ClotheResponse> getAllUserClothes(
             @RequestParam(required = false, defaultValue = Constant.PAGE_NO) int pageNo,
             @RequestParam(required = false, defaultValue = Constant.PAGE_SIZE_SMALL) int pageSize,
             @RequestParam(required = false, defaultValue = Constant.SORT_BY) String sortBy,
@@ -62,32 +56,31 @@ public class ClotheController {
             Principal principal) {
 
         var response = clothesService.getMyClothes(pageNo, pageSize, sortBy, direction, principal.getName());
-        ClotheModelResponse modelResponse = getClotheModelResponse(response);
 
-        return ResponseEntity.ok(modelResponse);
+        return ResponseEntity.ok(response);
     }
 
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping
-    public ResponseEntity<EntityModel<ClotheDto>> createClothe(@RequestBody @Valid ClotheDto clotheDto,
+    public ResponseEntity<ClotheDto> createClothe(@RequestBody @Valid ClotheDto clotheDto,
                                                                Principal principal) {
 
         var createdClothe = clothesService.addClothe(clotheDto, principal.getName());
 
         return ResponseEntity
                 .created(getLocation(createdClothe.getId()))
-                .body(assembler.toModel(createdClothe));
+                .body(createdClothe);
     }
 
     @SecurityRequirement(name = "bearerAuth")
     @PutMapping(value = "/{id}")
-    public ResponseEntity<EntityModel<ClotheDto>> updateClothe(@PathVariable Long id,
+    public ResponseEntity<ClotheDto> updateClothe(@PathVariable Long id,
                                                   @RequestBody @Valid ClotheDto clotheDto,
                                                   Principal principal) {
 
         var updatedClothe = clothesService.updateClothe(id, clotheDto, principal.getName());
 
-        return ResponseEntity.ok(assembler.toModel(updatedClothe));
+        return ResponseEntity.ok(updatedClothe);
     }
 
     @SecurityRequirement(name = "bearerAuth")
@@ -96,12 +89,6 @@ public class ClotheController {
         clothesService.deleteClothe(id, principal.getName());
 
         return ResponseEntity.noContent().build();
-    }
-
-    private ClotheModelResponse getClotheModelResponse(ClotheResponse clotheResponse) {
-        ClotheModelResponse modelResponse = ClotheModelResponse.from(clotheResponse);
-        modelResponse.setClothes(assembler.toCollectionModel(clotheResponse.getClothes()));
-        return modelResponse;
     }
 
     private URI getLocation(Object resourceId) {

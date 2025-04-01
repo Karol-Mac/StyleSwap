@@ -2,93 +2,89 @@ package com.restapi.styleswap.utils.assemblers;
 
 import com.restapi.styleswap.controller.*;
 import com.restapi.styleswap.payload.ClotheDto;
+import com.restapi.styleswap.payload.ClotheResponse;
 import com.restapi.styleswap.utils.Constant;
 import com.stripe.exception.StripeException;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.StreamSupport;
-
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @Component
-public class ClotheModelAssembler implements RepresentationModelAssembler<ClotheDto, EntityModel<ClotheDto>> {
+public class ClotheModelAssembler implements RepresentationModelAssembler<ClotheDto, ClotheDto> {
 
     @Override
-    public EntityModel<ClotheDto> toModel(ClotheDto entity) {
+    public ClotheDto toModel(ClotheDto entity) {
 
-        final var selfLinks = getClotheLink(entity);
-        final var conversationLinks = getConversationLinks(entity);
-        final var storageLinks = getStorageLinks(entity);
-        final var imageLinks = getImageLinks(entity);
-        final var orderLink = getOrderLink(entity);
-
-        List<Link> links = new ArrayList<>();
-        links.addAll(selfLinks);
-        links.addAll(conversationLinks);
-        links.addAll(storageLinks);
-        links.addAll(imageLinks);
-
-        links.add(orderLink);
-
-        return EntityModel.of(entity, links);
+        addEntityLinks(entity);
+        return entity;
     }
 
-    @Override
-    public CollectionModel<EntityModel<ClotheDto>> toCollectionModel(Iterable<? extends ClotheDto> entities) {
-
-        List<EntityModel<ClotheDto>> models = StreamSupport
-                                                .stream(entities.spliterator(), false)
-                                                .map(this::toModel)
-                                                .toList();
-
-        Link selfLink = getSelfLink(models);
-        return CollectionModel.of(models, selfLink);
+    private void addEntityLinks(ClotheDto entity) {
+        addClotheLinks(entity);
     }
 
-    private Link getSelfLink(List<EntityModel<ClotheDto>> models) {
-        Link selfLink;
+    public ClotheResponse toCollectionModel(ClotheResponse entity) {
 
-        if(allUsersSame(models)){
-            selfLink = linkTo(methodOn(ClotheController.class)
-                    .getAllUserClothes(0, 5, Constant.SORT_BY, Constant.DIRECTION, null))
-                    .withSelfRel()
-                    .andAffordance(afford(methodOn(ClotheController.class)
-                            .createClothe(null, null)));
-        } else {
-            long categoryId = models.get(0).getContent().getCategoryId();
+        var clotheModels = entity.getClothes().stream()
+                .map(this::toModel)
+                .toList();
 
-            selfLink = linkTo(methodOn(ClotheController.class)
-                    .getAllClothesFromCategory(categoryId, 0, 5, Constant.SORT_BY, Constant.DIRECTION))
-                    .withSelfRel();
+        entity.setClothes(clotheModels);
+        addPaginationLinks(entity);
+
+
+        return entity;
+    }
+
+    private void addPaginationLinks(ClotheResponse clotheResponse) {
+        if (clotheResponse.getPageNo() > 0) {
+            clotheResponse.add(linkTo(methodOn(ClotheController.class)
+                    .getAllClothesFromCategory(
+                            clotheResponse.getClothes().get(0).getCategoryId(),
+                            clotheResponse.getPageNo() - 1,
+                            clotheResponse.getPageSize(),
+                            Constant.SORT_BY, Constant.DIRECTION))
+                    .withRel("prev")
+
+                    //TODO: it does not do anything???
+//                    .andAffordance(afford(methodOn(ClotheController.class)
+//                            .getAllClothesFromCategory(
+//                                    clotheResponse.getClothes().get(0).getCategoryId(),
+//                                    clotheResponse.getPageNo() - 1,
+//                                    clotheResponse.getPageSize(),
+//                                    Constant.SORT_BY, Constant.DIRECTION
+//                            )))
+            );
         }
-        return selfLink;
+
+        if (!clotheResponse.isLast()) {
+            clotheResponse.add(linkTo(methodOn(ClotheController.class)
+                    .getAllClothesFromCategory(
+                            clotheResponse.getClothes().get(0).getCategoryId(),
+                            clotheResponse.getPageNo() + 1,
+                            clotheResponse.getPageSize(),
+                            Constant.SORT_BY, Constant.DIRECTION))
+                    .withRel("next"));
+        }
+
+        //TODO: should I add another links?
     }
 
-    private boolean allUsersSame(List<EntityModel<ClotheDto>> models) {
-        return models.stream()
-                .map(model -> model.getContent().getUserId())
-                .distinct()
-                .count() == 1;
-    }
 
-    private Link getOrderLink(ClotheDto entity) {
+    private void addOrderLink(ClotheDto entity) {
         try {
-            return linkTo(methodOn(OrderController.class)
+            entity.add(linkTo(methodOn(OrderController.class)
                     .order(entity.getId(), null))
                     .withRel("order_clothe")
-                    .withType("POST");
+                    .withType("POST"));
         } catch (StripeException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static List<Link> getStorageLinks(ClotheDto entity) {
+    private void addStorageLinks(ClotheDto entity) {
         Link addToStorage = linkTo(methodOn(StorageController.class)
                 .addClothe(entity.getId(), null))
                 .withRel("add_to_storage")
@@ -99,10 +95,10 @@ public class ClotheModelAssembler implements RepresentationModelAssembler<Clothe
                 .withRel("remove_from_storage")
                 .withType("DELETE");
 
-        return List.of(addToStorage, removeFromStorage);
+        entity.add(addToStorage, removeFromStorage);
     }
 
-    private List<Link> getConversationLinks(ClotheDto entity) {
+    private void addConversationLinks(ClotheDto entity) {
         Link startConversation = linkTo(methodOn(ConversationController.class)
                 .startConversation(entity.getId(), null))
                 .withRel("start_conversation")
@@ -112,10 +108,10 @@ public class ClotheModelAssembler implements RepresentationModelAssembler<Clothe
                 .getConversationsSelling(entity.getId(), null))
                 .withRel("conversation_selling");
 
-        return List.of(startConversation, conversationSelling);
+        entity.add(startConversation, conversationSelling);
     }
 
-    private List<Link> getImageLinks(ClotheDto entity) {
+    private void addImageLinks(ClotheDto entity) {
         Link updateImage = linkTo(methodOn(ImageController.class)
                 .uploadImage(entity.getId(), null, null))
                 .withRel("update_images")
@@ -126,21 +122,23 @@ public class ClotheModelAssembler implements RepresentationModelAssembler<Clothe
                 .withRel("delete_images")
                 .withType("DELETE");
 
-        return List.of(updateImage, deleteImage);
+        entity.add(updateImage, deleteImage);
     }
 
-    private List<Link> getClotheLink(ClotheDto entity) {
+    private void addClotheLinks(ClotheDto entity) {
         final var selfLink = linkTo(methodOn(ClotheController.class)
                 .getClothe(entity.getId(), null))
-                .withSelfRel()
-                .andAffordance(afford(methodOn(ClotheController.class)
-                        .updateClothe(entity.getId(), entity, null)))
-                .andAffordance(afford(methodOn(ClotheController.class)
-                        .deleteClothe(entity.getId(), null)));
+                .withSelfRel();
+                //TODO: it does not do anything???
+//                .andAffordance(afford(methodOn(ClotheController.class)
+//                        .updateClothe(entity.getId(), entity, null)))
+//                .andAffordance(afford(methodOn(ClotheController.class)
+//                        .deleteClothe(entity.getId(), null)));
 
-        final Link allLinks = linkTo(methodOn(ClotheController.class)
+        final Link collectionLink = linkTo(methodOn(ClotheController.class)
                 .getAllClothesFromCategory(entity.getCategoryId(), 0, 5, Constant.SORT_BY, Constant.DIRECTION))
                 .withRel("all_clothes");
-        return List.of(selfLink, allLinks);
+
+        entity.add(selfLink, collectionLink);
     }
 }
