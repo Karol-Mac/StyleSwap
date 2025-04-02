@@ -51,7 +51,6 @@ public class ClothesServiceImpl implements ClothesService {
         if (!categoryRepository.existsById(categoryId))
             throw new ResourceNotFoundException("Category", "id", categoryId);
 
-        //create Page<Clothe> with custom DB method
         Pageable page = getPageable(pageNo, pageSize, sortBy, direction);
         Page<Clothe> clothes = clotheRepository.findByCategoryId(categoryId, page);
 
@@ -64,7 +63,7 @@ public class ClothesServiceImpl implements ClothesService {
     public ClotheDto getClotheById(long clotheId, Optional<Principal> principal) {
 
         Clothe clothe = clotheUtils.getClotheFromDB(clotheId);
-
+        //TODO: create aspect that will increment views every time clothe is viewed
         if(principal.isEmpty() || !clotheUtils.isOwner(clotheId, principal.get().getName())) {
             clothe.setViews(clothe.getViews() + 1);
             clotheRepository.save(clothe);
@@ -81,7 +80,7 @@ public class ClothesServiceImpl implements ClothesService {
         Clothe clothe = clotheUtils.mapToEntity(clotheDto);
         clothe.setUser(user);
         clothe.setAvailable(true);
-
+        // TODO: create aspect that will increment clotheCounter in category every time clothe is added
         return clotheUtils.saveClotheInDB(clothe);
     }
 
@@ -115,7 +114,7 @@ public class ClothesServiceImpl implements ClothesService {
 
         Clothe clothe = clotheUtils.getClotheFromDB(id);
         clothe.setAvailable(false);
-
+        // TODO: create aspect that will decrement clotheCounter in category every time clothe is deleted
         clotheRepository.save(clothe);
     }
 

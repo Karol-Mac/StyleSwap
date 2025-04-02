@@ -12,7 +12,8 @@
          - po prostu usunąć 
          - zostawić, ale zablokować możliwość wysyłania wiadomości
 
--[ ] zwieksz poziom API na 3 - żeby działało jak strona internetowa
+-[x] zwieksz poziom API na 3 - żeby działało jak strona internetowa
+- [] dodaj aspekt aktualizujący licznik ubrań w kategorii i licznik wyświetleń w ubraniu
 
   -[x] dodanie zamówień
     -[x] dodaj encję Order i Storage.
