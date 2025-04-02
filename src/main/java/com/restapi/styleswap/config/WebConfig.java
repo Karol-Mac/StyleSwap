@@ -22,7 +22,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .useRegisteredExtensionsOnly(false)
                 .defaultContentType(MediaType.APPLICATION_JSON)
                 .mediaType("json", MediaType.APPLICATION_JSON)
-                .mediaType("hal+json", MediaType.parseMediaType("application/hal+json"));
+                .mediaType("hal+json", MediaType.parseMediaType("application/hal+json"))
+                .mediaType("hal+forms+json", MediaType.parseMediaType("application/hal+forms+json"));
     }
 
     @Bean
@@ -30,6 +31,7 @@ public class WebConfig implements WebMvcConfigurer {
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         List<MediaType> mediaTypes = new ArrayList<>(converter.getSupportedMediaTypes());
         mediaTypes.add(MediaType.parseMediaType("application/hal+json"));
+        mediaTypes.add(MediaType.parseMediaType("application/hal+forms+json"));
         converter.setSupportedMediaTypes(mediaTypes);
         return converter;
     }
