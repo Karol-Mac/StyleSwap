@@ -12,6 +12,8 @@ public interface ClotheRepository extends JpaRepository<Clothe, Long> {
 
     Page<Clothe> findByCategoryId(long categoryId, Pageable pageable);
 
+    long countByCategoryIdAndIsAvailableTrue(long categoryId);
+
     Page<Clothe> findByUserId(long userId, Pageable pageable);
 
     Page<Clothe> findByUserEmail(String email, Pageable pageable);

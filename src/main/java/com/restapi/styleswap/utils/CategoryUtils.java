@@ -5,15 +5,18 @@ import com.restapi.styleswap.exception.ResourceNotFoundException;
 import com.restapi.styleswap.payload.CategoryDto;
 import com.restapi.styleswap.payload.CategoryEdditDto;
 import com.restapi.styleswap.repository.CategoryRepository;
+import com.restapi.styleswap.repository.ClotheRepository;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CategoryUtils {
 
     private final CategoryRepository categoryRepository;
+    private final ClotheRepository clotheRepository;
 
-    public CategoryUtils(CategoryRepository categoryRepository) {
+    public CategoryUtils(CategoryRepository categoryRepository, ClotheRepository clotheRepository) {
         this.categoryRepository = categoryRepository;
+        this.clotheRepository = clotheRepository;
     }
 
     public Category mapCategoryToEntity(CategoryEdditDto categoryDto){
@@ -24,15 +27,16 @@ public class CategoryUtils {
         return category;
     }
 
-    public CategoryDto mapCategoryToDto(Category category){
+    public CategoryDto mapCategoryToDto(Category category) {
         var categoryDto = new CategoryDto();
         categoryDto.setId(category.getId());
         categoryDto.setName(category.getName());
         categoryDto.setDescription(category.getDescription());
         categoryDto.setCreatedAt(category.getCreatedAt());
         categoryDto.setUpdatedAt(category.getUpdatedAt());
-        var clothes = category.getClothes()==null ? 0 : category.getClothes().size();
-        categoryDto.setClothesCount(clothes);
+
+        long count = clotheRepository.countByCategoryIdAndIsAvailableTrue(category.getId());
+        categoryDto.setClothesCount(count);
 
         return categoryDto;
     }

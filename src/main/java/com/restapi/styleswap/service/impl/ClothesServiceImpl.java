@@ -75,7 +75,6 @@ public class ClothesServiceImpl implements ClothesService {
         Clothe clothe = clotheUtils.mapToEntity(clotheDto);
         clothe.setUser(user);
         clothe.setAvailable(true);
-        // TODO: create aspect that will increment clotheCounter in category every time clothe is added
         return clotheUtils.saveClotheInDB(clothe);
     }
 
@@ -109,7 +108,6 @@ public class ClothesServiceImpl implements ClothesService {
 
         Clothe clothe = clotheUtils.getClotheFromDB(id);
         clothe.setAvailable(false);
-        // TODO: create aspect that will decrement clotheCounter in category every time clothe is deleted
         clotheRepository.save(clothe);
     }
 

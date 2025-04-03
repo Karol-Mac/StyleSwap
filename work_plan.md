@@ -13,7 +13,7 @@
          - zostawić, ale zablokować możliwość wysyłania wiadomości
 
 -[x] zwieksz poziom API na 3 - żeby działało jak strona internetowa
-- [] dodaj aspekt aktualizujący licznik ubrań w kategorii i licznik wyświetleń w ubraniu
+-[x] dodaj aspekt aktualizujący licznik ubrań w kategorii i licznik wyświetleń w ubraniu
 
   -[x] dodanie zamówień
     -[x] dodaj encję Order i Storage.
