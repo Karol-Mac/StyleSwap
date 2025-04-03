@@ -63,11 +63,6 @@ public class ClothesServiceImpl implements ClothesService {
     public ClotheDto getClotheById(long clotheId, Optional<Principal> principal) {
 
         Clothe clothe = clotheUtils.getClotheFromDB(clotheId);
-        //TODO: create aspect that will increment views every time clothe is viewed
-        if(principal.isEmpty() || !clotheUtils.isOwner(clotheId, principal.get().getName())) {
-            clothe.setViews(clothe.getViews() + 1);
-            clotheRepository.save(clothe);
-        }
 
         return clotheUtils.mapToDto(clothe);
     }

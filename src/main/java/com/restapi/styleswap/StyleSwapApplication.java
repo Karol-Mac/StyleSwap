@@ -6,6 +6,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
@@ -19,6 +20,7 @@ import java.sql.Connection;
 
 @SpringBootApplication
 @EnableTransactionManagement
+@EnableAspectJAutoProxy
 @EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL_FORMS)
 public class StyleSwapApplication {
 	@Autowired
