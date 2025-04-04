@@ -12,8 +12,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -41,20 +39,6 @@ public class StyleSwapApplication {
 				ScriptUtils.executeSqlScript(connection, resource);
 			} catch (Exception e) {
 				e.printStackTrace();
-			}
-		};
-	}
-
-	@Bean
-	public WebMvcConfigurer corsConfigurer() {
-		return new WebMvcConfigurer() {
-			@Override
-			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**") // określ endpointy, które mają obsługiwać CORS
-						.allowedOrigins("http://localhost:5173")
-						.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // określ dozwolone metody
-						.allowedHeaders("*") // określ dozwolone nagłówki
-						.allowCredentials(true); // pozwala na wysyłanie ciasteczek (jeśli potrzebujesz)
 			}
 		};
 	}

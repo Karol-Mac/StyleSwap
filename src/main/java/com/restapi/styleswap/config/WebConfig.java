@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.ArrayList;
@@ -39,5 +40,14 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.add(mappingJackson2HttpMessageConverter());
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**") // określ endpointy, które mają obsługiwać CORS
+                .allowedOrigins("https://styleswap-691724339754.us-central1.run.app/")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // określ dozwolone metody
+                .allowedHeaders("*") // określ dozwolone nagłówki
+                .allowCredentials(true); // pozwala na wysyłanie ciasteczek (jeśli potrzebujesz)
     }
 }
